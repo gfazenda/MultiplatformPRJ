@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>		
+	<head> 
+
+		<title>Inicio</title>
+		<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+			
+		<script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
+                authDomain: "teste-firebase-23985.firebaseapp.com",
+                databaseURL: "https://teste-firebase-23985.firebaseio.com",
+                projectId: "teste-firebase-23985",
+                storageBucket: "teste-firebase-23985.appspot.com",
+                messagingSenderId: "493837150254"
+            };
+            firebase.initializeApp(config);
+            
+        </script>
+	</head>
+	
+	<body> 
+		<div id="ini" ng-app="myIni" ng-controller="ini">
+			
+			<section>
+				<pre id="chat"></pre>
+				<input type="text" id="msg" placeholder="Sua mensagem">
+				<input type="button" ng-click="enviar();" value="Enviar">
+			</section>
+	
+			<div class="row">
+			<div class="col s2 m5">
+					<div class="card blue-grey darken-1">
+						<div class="card-content white-text">
+							<span class="card-title"><img id="google-pic" height="100" width="100" src="https://escuchaelmar.files.wordpress.com/2014/06/nada.jpg?w=627"></img></span>
+							<div class="card-action">
+
+								<p id="google-displayName"></p>
+							
+								<p id="google-email"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col s2 m2">
+					<div class="card blue-grey darken-1">
+						<div class="card-content white-text">
+							<span class="card-title">Personagem</span>
+							<div class="card-action">
+							
+								<span id="nomeChar"></span>
+								
+								<p id="levelChar"></p>
+								<p id="poderChar"></p>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col s2 m2">
+					<div class="card blue-grey darken-1">
+						<div class="card-content white-text">
+							<span class="card-title">Usuarios Logados</span>
+							<div class="card-action">
+							
+								<span id="user" value=""></span>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+			</div>
+			
+
+			<!-- <p>Usuarios Logados</p><p id="usuariosQantidade"><%= userbytwo %></p> -->
+
+			<a class="waves-effect waves-light btn" ng-click="entrarFila()">Entrar Fila</a>
+			<a class="waves-effect waves-light btn" id="jogarBtn" ng-click="jogar()">Jogar</a>
+			<a class="waves-effect waves-light btn" id="signOut" ng-click="signOut()">sign Out</a>
+	
+
+		</div>
+
+		
+		<script src="js/inicio.js"></script>
+		<script src="js/firebaseAuth.js"></script>
+
+		
+	</body>
+
+</html>
