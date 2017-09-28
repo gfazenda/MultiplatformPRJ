@@ -68,19 +68,16 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		socket.emit('buscaPersonagens');
 		socket.on('enviaOsPersonagens', function (personagens) {
 			
-			if(!personagens.length){//enquanto nao tiver acabado o load do banco de dado a função ficara rodando até retornar alguma coisa;
-				socket.emit('buscaPersonagens');
-				
-			}else{
+			$scope.$apply(function() {
 			
-				//console.log(personagens.length);
-				for(var i = 0 ; i < personagens.length; i++){
-					personagemGlob[i] = personagens[i];
-					//console.log(personagemGlob[i]);
-				}
-				
-				$scope.comparaId();
-			}
+					//console.log(personagens.length);
+					for(var i = 0 ; i < personagens.length; i++){
+						personagemGlob[i] = personagens[i];
+						//console.log(personagemGlob[i]);
+					}
+					
+					$scope.comparaId();
+			});
 		});
 	}
 	//-----------------------------------------------------------------------------------------
@@ -117,6 +114,16 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		$scope.player2HP = playersOnline[1].hp;
 
 		//console.log($scope.player1HP);
+	}
+	
+	$scope.getCharacter = function(uid){
+		
+		for(var j = 0 ; j < personagemGlob.length; j++){
+			if(uid == personagemGlob[j].userId){
+				
+				return personagemGlob[j];
+			}
+		}
 	}
 	
 //-----------------------------------------------------------------------------------------
@@ -185,12 +192,20 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	   // return true
 	}
 
-	$scope.attack = function(){
-
-		$scope.enemyHP--;
+	$scope.attack = function(numberAttack){
+	
+		$scope.$apply (function(){
+			socket.emit('attack',{character: $scope.getCharacter(firebase.auth().currentUser.uid), 
+													nAtaque: numberAttack,
+												});
+		});
+	}
+	
+	socket.on('sendAttack', function (dano) {
+		$scope.enemyHP -= dano;
 		console.log($scope.enemyHP);
 		$scope.checkIfEnemyDead();
-	}
+	})
 
 	
 

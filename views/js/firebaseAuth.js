@@ -7,6 +7,7 @@ angular.module('myApp', []).controller('Game', function ($scope, $http) {
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
 				window.location.href = '/inicio'; 
+				console.log("user logged in");
 
 			}else{//nao logado
 

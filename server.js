@@ -149,6 +149,7 @@ var poder;
 io.sockets.on('connection', function (client) {
    // Recuperando uma sessão Express.
    
+	
 	//personagemEscolha-----------------------------------------\/
 	client.on('tragaPersonagensModelos', function () {
 		var personagemRef = dataBase.ref('/players');
@@ -256,6 +257,33 @@ io.sockets.on('connection', function (client) {
 		client.broadcast.emit('enviaOsPersonagens', players);
 
 	});
+	
+	//-------------------------------------------------------------
+	
+	client.on('attack', function (character, numberAttack) { 
+		//client.emit('enviaOsPlayers', jogadoresRef);
+		
+		var damage;
+		
+		switch(character.class){
+			
+			case mage:
+			
+				damage = attackMage(character, numberAttack);
+				break;
+			
+			case warrior:
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+		client.broadcast.emit('sendAttack', damage);
+	});
+	
+	//-------------------------------------------------------------
 	//calcAtaque(atacante.uid, atacante.nAtaque);
 	//-----------------------------------------------------------/\
 	
@@ -273,6 +301,71 @@ var a = function(){
 	
 }
 console.log(x);
+
+attackMage = function(mage, numberAttack){
+	
+	//MAGE
+	// 1 - Ataque Básico
+	// 2 - Poder de cura
+	// 3 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
+	// 4 - Bola de fogo (queima inimigo, dano por turno)
+	
+	var damage = mage.power;
+
+	switch(numberAttack){
+			
+			case 1:
+				
+				return damage;
+				break;
+			
+			case 2:
+			
+				
+				break;
+			
+			case 3:
+			
+				break;
+			
+			case 4:
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+
+}
+
+attackWarrior = function(warrior, numberAttack){
+	
+	//WARRIOR
+	// 1 - Ataque Básico
+	// 2 - Poder de absorver danos causados ao mago
+	// 3 - Ataque de fúria - atk em área com dano muito alto, porém fica impossibilitado de jogar na rodada seguinte
+		
+	switch(numberAttack){
+			
+			case 1:
+			
+				break;
+			
+			case 2:
+			
+				break;
+			
+			case 3:
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+
+}
 
 pegaPersonagem = function(usuarioId){
 	var personagemRef = dataBase.ref('/personagem');
