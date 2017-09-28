@@ -128,22 +128,54 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	
 //-----------------------------------------------------------------------------------------
 
-	$scope.getEnemyStats = function(enemyName){
-		console.log("enemyURL(1) is: " + $scope.enemyURL);                    
+	// $scope.getEnemyStats = function(enemyName){
+	// 	console.log("enemyURL(1) is: " + $scope.enemyURL);                    
 		
-		var database = firebase.database();    
-		var EnemiesRef = database.ref('/enemiesSprite');
-		EnemiesRef.on('child_added', function(snapshot){
-			$scope.$apply(function () {
+	// 	var database = firebase.database();    
+	// 	var EnemiesRef = database.ref('/enemiesSprite');
+	// 	EnemiesRef.on('child_added', function(snapshot){
+	// 		console.log("cheguei aquiqqqq");
 			
-			if(snapshot.val().name == enemyName){
-				$scope.enemyURL = snapshot.val().sprite;
-				$scope.enemyHP = snapshot.val().hp;
-				console.log("enemyURL(2) is: " + $scope.enemyURL);   
-			}
-			});
-		})
+			
+	// 		if(snapshot.val().name == enemyName){
+	// 			$scope.$apply(function () {
+					
+	// 			$scope.enemyURL = snapshot.val().sprite;
+	// 			$scope.enemyHP = snapshot.val().hp;
+	// 			console.log("enemyURL(2) is: " + $scope.enemyURL);   
+	// 		});
+	// 		}
+			
+	// 	})
+	// }
+
+
+	$scope.aff = function(){
+		socket.emit('MDS');
+		console.log("não funciona aaaaa");
 	}
+
+	$scope.aff();
+
+	$scope.getEnemyStats = function(){
+		
+		socket.emit('buscaInimigo');
+		console.log("buscando inimigo");
+	}
+	
+	$scope.getEnemyStats();
+	
+	socket.on('trazInimigo', function (inimigo) {
+		
+		console.log("inimigo");  
+		console.log(inimigo);  
+		
+		 $scope.$apply(function () {
+			$scope.enemyURL = inimigo.sprite;
+			$scope.enemyHP = inimigo.hp;
+		 });
+
+	});
 			
 	$scope.getRandomInt = function (min, max) {
 		min = Math.ceil(min);
@@ -211,7 +243,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 
 	//$scope.getPlayerStats("player1");
 	//$scope.getPlayerStats("player2");
-	$scope.getRandomEnemy();
+	//$scope.getRandomEnemy();
 
 });
 

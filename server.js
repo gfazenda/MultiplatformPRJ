@@ -145,6 +145,7 @@ var presonagens = [];
 var jogadores = [];
 var jogadoresRef = [];
 var poder;
+
 // Iniciando uma conexão com Socket.IO.
 io.sockets.on('connection', function (client) {
    // Recuperando uma sessão Express.
@@ -258,6 +259,31 @@ io.sockets.on('connection', function (client) {
 
 	});
 	
+	//Inimigos---------------------------------------------------\/
+	client.on('buscaInimigo', function () {
+		console.log("TESTE");
+		
+		var enemiesRef = dataBase.ref('/enemiesSprite');
+		
+		//getRandomEnemy() - > retorna o nome do iimigo
+		var nameEnemy = getRandomEnemy();
+		enemiesRef.on('value', function(snapshot){
+			snapshot.forEach(function(enemy){
+				if(enemy.val().name == nameEnemy){
+					console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
+					client.emit('trazInimigo', enemy.val());
+					client.broadcast.emit('trazInimigo', enemy.val());
+				}
+			})
+
+		})
+	});
+
+	client.on('teste', function(){
+		console.log("MDS");
+	});
+	//-----------------------------------------------------------/\
+	
 	//-------------------------------------------------------------
 	
 	client.on('attack', function (character, numberAttack) { 
@@ -282,6 +308,8 @@ io.sockets.on('connection', function (client) {
 		}
 		client.broadcast.emit('sendAttack', damage);
 	});
+
+	
 	
 	//-------------------------------------------------------------
 	//calcAtaque(atacante.uid, atacante.nAtaque);
@@ -366,6 +394,40 @@ attackWarrior = function(warrior, numberAttack){
 		}
 
 }
+
+getRandomEnemy = function(){
+	
+		var enemyNumber = getRandomInt(4,1);
+		//console.log("enemyNumber is : " + enemyNumber);
+		var nameEnemy;
+		switch(enemyNumber)   {
+			case 1:
+	
+				nameEnemy = "enemy1";
+				break;
+	
+			case 2:
+	
+				nameEnemy = "enemy2";                
+				break;
+	
+			case 3:
+	
+				nameEnemy = "enemy3";                
+				break;
+	
+			default:
+				break;
+		}     
+	
+		return nameEnemy;
+	}
+	
+	getRandomInt = function (min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min)) + min;
+	}
 
 pegaPersonagem = function(usuarioId){
 	var personagemRef = dataBase.ref('/personagem');
