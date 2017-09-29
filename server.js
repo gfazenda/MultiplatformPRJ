@@ -216,9 +216,10 @@ attackWarrior = function(warrior, numberAttack){
 damageMonster = function(damage){
 	currentMonster.hp -= damage;
 	if(currentMonster.hp <= 0){
-
+		getNewEnemy();
+		io.sockets.emit('newRound');
 	}
-	_client.emit('dshfdfl');
+	
 }
 
 getNewEnemy = function(damage){
@@ -265,7 +266,7 @@ io.sockets.on('connection', function (client) {
 	var session = client.handshake.session;
 
 	client.on('toServer2', function (nomeJogador) {
-		console.log(nomeJogador);
+		// console.log(nomeJogador);
 		nome = nomeJogador;
 	});
 
@@ -342,19 +343,21 @@ io.sockets.on('connection', function (client) {
 		var players = [];
 		
 		var playersRef = dataBase.ref('/personagem');
-		
+		var index = 0;
 		playersRef.on('value', function(snapshot){
 			snapshot.forEach(function(id) {
-				players[players.length] = id.val();
-				console.log(players[players.length]);
+				players[index] = id.val();
+				// console.log(players[index]);
+				index++;
 			});
 		})
 		
-		console.log(players);
+		// console.log(players);
 		// client.emit('enviaOsPersonagens', players);
 		// client.broadcast.emit('enviaOsPersonagens', players);
 		io.sockets.emit('enviaOsPersonagens', players);
 	});
+	
 	
 	//Inimigos---------------------------------------------------\/
 	client.on('buscaInimigo', function () {
@@ -399,7 +402,10 @@ io.sockets.on('connection', function (client) {
 		if(turnCount>=2){
 			doEnemyAttack();
 			turnCount = 0;
-			io.sockets.emit("playersTurn");
+			//io.sockets.emit('enemyDamaged',99999999);
+			io.sockets.emit('playersTurn');
+			//client.emit('playersTurn',99999999)
+			//client.broadcast.emit('playersTurn',99999999)
 		}
 		console.log('monster hp is ' + currentMonster.hp);
 		// client.emit('enemyDamaged',currentMonster.hp)
@@ -411,6 +417,7 @@ io.sockets.on('connection', function (client) {
 
 	doEnemyAttack = function(){
 		console.log('destroying players!!!!!!!')
+		
 	}
 	
 	//-------------------------------------------------------------

@@ -89,6 +89,19 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 
 		$scope.chamePersonagens();
 	});
+
+
+	// $scope.chamePersonagens = function(){
+	// 	socket.emit('getMyChar',firebase.auth().currentUser.uid);
+
+	// }
+
+	// socket.on('loadCharacter', function (personagen) {
+	// 	$scope.$apply(function() {
+	// 		$scope.player1URL = personagen.sprite;
+	// 		$scope.player1HP = personagen.hp;
+	// 	});
+	// });
 	//-----------------------------------------------------------------------------------------
 	//pega personagens do banco----------------------------------------------------------------
 	$scope.chamePersonagens = function(){
@@ -101,7 +114,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 			
 					//console.log(personagens.length);
 					for(var i = 0 ; i < personagens.length; i++){
-						personagemGlob[i] = personagens[i];
+						personagemGlob.push(personagens[i]);
 						//console.log(personagemGlob[i]);
 					}
 					
@@ -127,8 +140,8 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 				}
 			}
 		}
-
-		$scope.getPlayerStats();
+		// if(it>=2)
+			$scope.getPlayerStats();
 	}
 
 	$scope.getPlayerStats = function(){
@@ -229,20 +242,20 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		}         
 	}
 
-	$scope.checkIfEnemyDead = function() {
-		if($scope.enemyHP <= 0){
-			console.log("ENEMY DEAD");
-			$scope.round++;
-			setTimeout(function() {
-				$scope.getRandomEnemy(); 
-			}, 1000);                    
+	// $scope.checkIfEnemyDead = function() {
+	// 	if($scope.enemyHP <= 0){
+	// 		console.log("ENEMY DEAD");
+	// 		$scope.round++;
+	// 		setTimeout(function() {
+	// 			$scope.getRandomEnemy(); 
+	// 		}, 1000);                    
 			
-		}
-		else{
-			console.log("NOT DEAD");
-		}
-	   // return true
-	}
+	// 	}
+	// 	else{
+	// 		console.log("NOT DEAD");
+	// 	}
+	//    // return true
+	// }
 
 	$scope.attack = function(numberAttack){
 		//console.log("CURRENT USER: " + $scope.getCharacter(firebase.auth().currentUser.uid));
@@ -257,14 +270,41 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	}
 
 	socket.on('enemyDamaged', function (hpMonster) {
+		
 		$scope.$apply (function(){
 			$scope.enemyHP = hpMonster;
 		});
 	});
 
-	socket.on('playersturn', function () {
-		$scope.enemyTurn = false;
+
+	socket.on('newRound', function () {
+		$scope.$apply (function(){
+			$scope.round++;
+		});
 	});
+
+	socket.on('playersTurn', function () {
+		$scope.$apply (function(){
+			$scope.enemyTurn = false;
+		});
+	});
+	// socket.on('playersturn', function (hpMonster) {
+	// 	$scope.$apply (function(){
+			
+	// 		$scope.enemyHP = -111;
+	// 		//$scope.enemyTurn = false;
+	// 	});
+	// 	//console.log('called here');
+	// });
+
+
+	// socket.on('playersturn', function () {
+		
+	// 	$scope.$apply (function(){
+	// 		console.log('called here');
+	// 		$scope.enemyTurn = false;
+	// 	});
+	// });
 	
 	// socket.on('sendAttack', function (dano) {
 	// 	$scope.$apply (function(){
