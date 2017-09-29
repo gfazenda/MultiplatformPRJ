@@ -1,7 +1,7 @@
 angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	
 	$scope.round = 0;
-
+	$scope.enemyTurn = false;
 // Initialize Firebase
 // TODO: Replace with your project's customized code snippet
 	// var config = {
@@ -178,12 +178,12 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	// 	})
 	// }
 
-	$scope.getEnemyStats = function(){
+	// $scope.getEnemyStats = function(){
 		
-		socket.emit('buscaInimigo');
-	}
+	// 	socket.emit('buscaInimigo');
+	// }
 	
-	$scope.getEnemyStats();
+	// $scope.getEnemyStats();
 	
 	socket.on('trazInimigo', function (inimigo) {
 		
@@ -253,17 +253,28 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 													nAtaque: numberAttack
 												});
 		//});
+		$scope.enemyTurn = true;
 	}
-	
-	socket.on('sendAttack', function (dano) {
+
+	socket.on('enemyDamaged', function (hpMonster) {
 		$scope.$apply (function(){
-			$scope.enemyHP -= dano;  //com apply atualiza o hp e round no usuário que não atacou somente...
+			$scope.enemyHP = hpMonster;
 		});
-			console.log("enemyHP is... " + $scope.enemyHP);
-			$scope.checkIfEnemyDead();
+	});
+
+	socket.on('playersturn', function () {
+		$scope.enemyTurn = false;
+	});
+	
+	// socket.on('sendAttack', function (dano) {
+	// 	$scope.$apply (function(){
+	// 		$scope.enemyHP -= dano;  //com apply atualiza o hp e round no usuário que não atacou somente...
+	// 	});
+	// 		console.log("enemyHP is... " + $scope.enemyHP);
+	// 		$scope.checkIfEnemyDead();
 		
 
-	})
+	// })
 
 	
 

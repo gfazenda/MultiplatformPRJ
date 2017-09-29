@@ -145,7 +145,9 @@ var presonagens = [];
 var jogadores = [];
 var jogadoresRef = [];
 var poder;
-
+var currentMonster;
+var turnCount = 0; //se = 2, monstro ataca
+var _client;
 attackMage = function(mage, numberAttack){
 	
 	//MAGE
@@ -160,7 +162,7 @@ attackMage = function(mage, numberAttack){
 			
 			case 1:
 			console.log("damage mage: " + damage);
-				return damage;
+			damageMonster(damage);
 				break;
 			
 			case 2:
@@ -189,11 +191,11 @@ attackWarrior = function(warrior, numberAttack){
 	// 1 - Ataque Básico
 	// 2 - Poder de absorver danos causados ao mago
 	// 3 - Ataque de fúria - atk em área com dano muito alto, porém fica impossibilitado de jogar na rodada seguinte
-		
+	var damage = warrior.power
 	switch(numberAttack){
 			
 			case 1:
-			
+				damageMonster(damage);
 				break;
 			
 			case 2:
@@ -201,7 +203,7 @@ attackWarrior = function(warrior, numberAttack){
 				break;
 			
 			case 3:
-			
+				damageMonster(damage*3);
 				break;
 				
 			default:
@@ -211,10 +213,37 @@ attackWarrior = function(warrior, numberAttack){
 
 }
 
+damageMonster = function(damage){
+	currentMonster.hp -= damage;
+	if(currentMonster.hp <= 0){
+
+	}
+	_client.emit('dshfdfl');
+}
+
+getNewEnemy = function(damage){
+	var enemiesRef = dataBase.ref('/enemiesSprite');
+	
+	//getRandomEnemy() - > retorna o nome do iimigo
+	var nameEnemy = getRandomEnemy();
+	enemiesRef.on('value', function(snapshot){
+		snapshot.forEach(function(enemy){
+			if(enemy.val().name == nameEnemy){
+				currentMonster = enemy.val();
+				console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
+				// client.emit('trazInimigo', enemy.val());
+				// client.broadcast.emit('trazInimigo', enemy.val());
+				io.sockets.emit('trazInimigo', enemy.val());
+			}
+		})
+
+	})
+}
+
 // Iniciando uma conexão com Socket.IO.
 io.sockets.on('connection', function (client) {
    // Recuperando uma sessão Express.
-   
+   _client = client;
 	
 	//personagemEscolha-----------------------------------------\/
 	client.on('tragaPersonagensModelos', function () {
@@ -248,6 +277,7 @@ io.sockets.on('connection', function (client) {
 	//-----------------------------------------------------------/\
 	//fila-------------------------------------------------------\/
 	var contExisteNaLista;
+	
 	client.on('userOnServer', function (jogador) {
 
 		if(jogadores.length > 0){
@@ -280,29 +310,31 @@ io.sockets.on('connection', function (client) {
 	
 	//jogo-------------------------------------------------------\/
 	
-	client.on('enviaAtacanteAtaque', function (atacante) { // calclar dano e verificar quem esta atacando atacando
-		//console.log(atacante.uid);
-		//console.log(atacante.nAtaque);
-		//console.log(atacante.turno);
-		pegaPersonagem(atacante.uid);
+	// client.on('enviaAtacanteAtaque', function (atacante) { // calclar dano e verificar quem esta atacando atacando
+	// 	//console.log(atacante.uid);
+	// 	//console.log(atacante.nAtaque);
+	// 	//console.log(atacante.turno);
+	// 	pegaPersonagem(atacante.uid);
 		
-		if(atacante.nAtaque == 1){
-			poder = poder + (poder/10)
-		}else if(atacante.nAtaque == 2){
-			poder = poder + (poder*0.5)
-		}else if(atacante.nAtaque == 3){
-			poder = poder*2
-		}
+	// 	if(atacante.nAtaque == 1){
+	// 		poder = poder + (poder/10)
+	// 	}else if(atacante.nAtaque == 2){
+	// 		poder = poder + (poder*0.5)
+	// 	}else if(atacante.nAtaque == 3){
+	// 		poder = poder*2
+	// 	}
 		
-		console.log(poder)
+	// 	console.log(poder)
 		
-		client.emit('turno', atacante.turno);
-	});
+	// 	client.emit('turno', atacante.turno);
+	// });
 	//-------------------------------------------------------------
 	
 	client.on('pedeOsPlayers', function () { 
-		client.emit('enviaOsPlayers', jogadoresRef);
-		client.broadcast.emit('enviaOsPlayers', jogadoresRef);
+		getNewEnemy();
+		// client.emit('enviaOsPlayers', jogadoresRef);
+		// client.broadcast.emit('enviaOsPlayers', jogadoresRef);
+		io.sockets.emit('enviaOsPlayers', jogadoresRef);
 	});
 	
 	//-------------------------------------------------------------
@@ -319,28 +351,30 @@ io.sockets.on('connection', function (client) {
 		})
 		
 		console.log(players);
-		client.emit('enviaOsPersonagens', players);
-		client.broadcast.emit('enviaOsPersonagens', players);
-
+		// client.emit('enviaOsPersonagens', players);
+		// client.broadcast.emit('enviaOsPersonagens', players);
+		io.sockets.emit('enviaOsPersonagens', players);
 	});
 	
 	//Inimigos---------------------------------------------------\/
 	client.on('buscaInimigo', function () {
+		getNewEnemy();
+		// var enemiesRef = dataBase.ref('/enemiesSprite');
 		
-		var enemiesRef = dataBase.ref('/enemiesSprite');
-		
-		//getRandomEnemy() - > retorna o nome do iimigo
-		var nameEnemy = getRandomEnemy();
-		enemiesRef.on('value', function(snapshot){
-			snapshot.forEach(function(enemy){
-				if(enemy.val().name == nameEnemy){
-					console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
-					client.emit('trazInimigo', enemy.val());
-					client.broadcast.emit('trazInimigo', enemy.val());
-				}
-			})
+		// //getRandomEnemy() - > retorna o nome do iimigo
+		// var nameEnemy = getRandomEnemy();
+		// enemiesRef.on('value', function(snapshot){
+		// 	snapshot.forEach(function(enemy){
+		// 		if(enemy.val().name == nameEnemy){
+		// 			currentMonster = enemy.val();
+		// 			console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
+		// 			// client.emit('trazInimigo', enemy.val());
+		// 			// client.broadcast.emit('trazInimigo', enemy.val());
+		// 			io.sockets.emit('trazInimigo', enemy.val());
+		// 		}
+		// 	})
 
-		})
+		// })
 	});
 	//-----------------------------------------------------------/\
 
@@ -355,28 +389,29 @@ io.sockets.on('connection', function (client) {
 
 		//console.log("CLASSE: " + character.class);
 		if(charObject.character.class == "mage"){
-			damage = attackMage(charObject.character, charObject.nAtaque);
+			//damage = 
+			attackMage(charObject.character, charObject.nAtaque);
+		}else{
+			attackWarrior(charObject.character, charObject.nAtaque);
 		}
-		// switch(charObject.character.class){
-			
-		// 	case "mage":
-			
-		// 		damage = attackMage(charParam.character, charParam.numberAttack);
-		// 		break;
-			
-		// 	case "warrior":
-			
-		// 		break;
-				
-		// 	default:
-				
-		// 		break;
-		// }
-		client.emit('sendAttack', damage);		
-		client.broadcast.emit('sendAttack', damage);
+		io.sockets.emit('enemyDamaged',currentMonster.hp);
+		turnCount++;
+		if(turnCount>=2){
+			doEnemyAttack();
+			turnCount = 0;
+			io.sockets.emit("playersTurn");
+		}
+		console.log('monster hp is ' + currentMonster.hp);
+		// client.emit('enemyDamaged',currentMonster.hp)
+		// client.broadcast.emit('enemyDamaged',currentMonster.hp)
+		
+		// client.emit('sendAttack', damage);		
+		// client.broadcast.emit('sendAttack', damage);
 	});
 
-	
+	doEnemyAttack = function(){
+		console.log('destroying players!!!!!!!')
+	}
 	
 	//-------------------------------------------------------------
 	//calcAtaque(atacante.uid, atacante.nAtaque);
@@ -425,11 +460,13 @@ getRandomEnemy = function(){
 		return nameEnemy;
 	}
 	
-	getRandomInt = function (min, max) {
+
+getRandomInt = function (min, max) {
 		min = Math.ceil(min);
 		max = Math.floor(max);
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
+
 
 pegaPersonagem = function(usuarioId){
 	var personagemRef = dataBase.ref('/personagem');
