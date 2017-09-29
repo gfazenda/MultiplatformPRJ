@@ -146,6 +146,71 @@ var jogadores = [];
 var jogadoresRef = [];
 var poder;
 
+attackMage = function(mage, numberAttack){
+	
+	//MAGE
+	// 1 - Ataque Básico
+	// 2 - Poder de cura
+	// 3 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
+	// 4 - Bola de fogo (queima inimigo, dano por turno)
+	
+	var damage = mage.power;
+
+	switch(numberAttack){
+			
+			case 1:
+			console.log("damage mage: " + damage);
+				return damage;
+				break;
+			
+			case 2:
+			
+				
+				break;
+			
+			case 3:
+			
+				break;
+			
+			case 4:
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+
+}
+
+attackWarrior = function(warrior, numberAttack){
+	
+	//WARRIOR
+	// 1 - Ataque Básico
+	// 2 - Poder de absorver danos causados ao mago
+	// 3 - Ataque de fúria - atk em área com dano muito alto, porém fica impossibilitado de jogar na rodada seguinte
+		
+	switch(numberAttack){
+			
+			case 1:
+			
+				break;
+			
+			case 2:
+			
+				break;
+			
+			case 3:
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+
+}
+
 // Iniciando uma conexão com Socket.IO.
 io.sockets.on('connection', function (client) {
    // Recuperando uma sessão Express.
@@ -261,7 +326,6 @@ io.sockets.on('connection', function (client) {
 	
 	//Inimigos---------------------------------------------------\/
 	client.on('buscaInimigo', function () {
-		console.log("TESTE");
 		
 		var enemiesRef = dataBase.ref('/enemiesSprite');
 		
@@ -278,34 +342,37 @@ io.sockets.on('connection', function (client) {
 
 		})
 	});
-
-	client.on('teste', function(){
-		console.log("MDS");
-	});
 	//-----------------------------------------------------------/\
-	
+
 	//-------------------------------------------------------------
 	
-	client.on('attack', function (character, numberAttack) { 
+	client.on('attack', function (charObject) { 
 		//client.emit('enviaOsPlayers', jogadoresRef);
+		var damage = 0;
+		console.log("charObject characterClass: " + charObject.character.class );
 		
-		var damage;
-		
-		switch(character.class){
-			
-			case mage:
-			
-				damage = attackMage(character, numberAttack);
-				break;
-			
-			case warrior:
-			
-				break;
-				
-			default:
-				
-				break;
+		console.log("charObject numberattack: " + charObject.nAtaque );
+
+		//console.log("CLASSE: " + character.class);
+		if(charObject.character.class == "mage"){
+			damage = attackMage(charObject.character, charObject.nAtaque);
 		}
+		// switch(charObject.character.class){
+			
+		// 	case "mage":
+			
+		// 		damage = attackMage(charParam.character, charParam.numberAttack);
+		// 		break;
+			
+		// 	case "warrior":
+			
+		// 		break;
+				
+		// 	default:
+				
+		// 		break;
+		// }
+		client.emit('sendAttack', damage);		
 		client.broadcast.emit('sendAttack', damage);
 	});
 
@@ -329,71 +396,6 @@ var a = function(){
 	
 }
 console.log(x);
-
-attackMage = function(mage, numberAttack){
-	
-	//MAGE
-	// 1 - Ataque Básico
-	// 2 - Poder de cura
-	// 3 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
-	// 4 - Bola de fogo (queima inimigo, dano por turno)
-	
-	var damage = mage.power;
-
-	switch(numberAttack){
-			
-			case 1:
-				
-				return damage;
-				break;
-			
-			case 2:
-			
-				
-				break;
-			
-			case 3:
-			
-				break;
-			
-			case 4:
-			
-				break;
-				
-			default:
-				
-				break;
-		}
-
-}
-
-attackWarrior = function(warrior, numberAttack){
-	
-	//WARRIOR
-	// 1 - Ataque Básico
-	// 2 - Poder de absorver danos causados ao mago
-	// 3 - Ataque de fúria - atk em área com dano muito alto, porém fica impossibilitado de jogar na rodada seguinte
-		
-	switch(numberAttack){
-			
-			case 1:
-			
-				break;
-			
-			case 2:
-			
-				break;
-			
-			case 3:
-			
-				break;
-				
-			default:
-				
-				break;
-		}
-
-}
 
 getRandomEnemy = function(){
 	

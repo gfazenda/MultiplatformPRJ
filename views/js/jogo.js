@@ -1,18 +1,47 @@
-
 angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	
 	$scope.round = 0;
 
 // Initialize Firebase
 // TODO: Replace with your project's customized code snippet
+	// var config = {
+	// 	apiKey: "AIzaSyBWTn-nzSkja6F2oTWKUeRkrYJwFaw-Hu8",
+	// 	authDomain: "fir-admin-1add3.firebaseapp.com",
+	// 	databaseURL: "https://fir-admin-1add3.firebaseio.com",
+	// 	storageBucket: "gs://fir-admin-1add3.appspot.com",
+	// 	messagingSenderId: "644958744075",
+	// };
+	// firebase.initializeApp(config);
+
 	var config = {
-		apiKey: "AIzaSyBWTn-nzSkja6F2oTWKUeRkrYJwFaw-Hu8",
-		authDomain: "fir-admin-1add3.firebaseapp.com",
-		databaseURL: "https://fir-admin-1add3.firebaseio.com",
-		storageBucket: "gs://fir-admin-1add3.appspot.com",
-		messagingSenderId: "644958744075",
+		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
+		authDomain: "teste-firebase-23985.firebaseapp.com",
+		databaseURL: "https://teste-firebase-23985.firebaseio.com",
+		projectId: "teste-firebase-23985",
+		storageBucket: "teste-firebase-23985.appspot.com",
+		messagingSenderId: "493837150254"
 	};
 	firebase.initializeApp(config);
+
+	//window.onload = function(){
+	$scope.checkIfLoggedIn = function(){
+
+		firebase.auth().onAuthStateChanged(function(user){
+			if(user){//logado
+				console.log("página jogo: user logged in");
+
+			}else{//nao logado
+
+				console.log("página jogo: não logado");
+			}
+			
+		})
+
+	}
+	
+		$scope.checkIfLoggedIn();
+		
+	
 		  
 	//socket----------------------------------------------------------------------------------
 	var socket = io('http://localhost:8080');
@@ -120,7 +149,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		
 		for(var j = 0 ; j < personagemGlob.length; j++){
 			if(uid == personagemGlob[j].userId){
-				
+				console.log(personagemGlob[j]);
 				return personagemGlob[j];
 			}
 		}
@@ -149,18 +178,9 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	// 	})
 	// }
 
-
-	$scope.aff = function(){
-		socket.emit('MDS');
-		console.log("não funciona aaaaa");
-	}
-
-	$scope.aff();
-
 	$scope.getEnemyStats = function(){
 		
 		socket.emit('buscaInimigo');
-		console.log("buscando inimigo");
 	}
 	
 	$scope.getEnemyStats();
@@ -225,18 +245,24 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	}
 
 	$scope.attack = function(numberAttack){
-	
-		$scope.$apply (function(){
+		//console.log("CURRENT USER: " + $scope.getCharacter(firebase.auth().currentUser.uid));
+		//console.log("CLASSE: " + $scope.getCharacter(firebase.auth().currentUser).class);
+		
+		//$scope.$apply (function(){
 			socket.emit('attack',{character: $scope.getCharacter(firebase.auth().currentUser.uid), 
-													nAtaque: numberAttack,
+													nAtaque: numberAttack
 												});
-		});
+		//});
 	}
 	
 	socket.on('sendAttack', function (dano) {
-		$scope.enemyHP -= dano;
-		console.log($scope.enemyHP);
-		$scope.checkIfEnemyDead();
+		$scope.$apply (function(){
+			$scope.enemyHP -= dano;  //com apply atualiza o hp e round no usuário que não atacou somente...
+		});
+			console.log("enemyHP is... " + $scope.enemyHP);
+			$scope.checkIfEnemyDead();
+		
+
 	})
 
 	

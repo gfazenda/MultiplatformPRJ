@@ -3,6 +3,8 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 
 	//socket----------------------------------------------------------------------------------
 
+	var canPlay = false;
+
 	var socket = io('http://localhost:8080');
 
 	socket.on('toClient', function (msg) {
@@ -93,10 +95,13 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
 				$scope.existePersonagem();
-				
+				console.log("entrou em auth");
 				var photoURL = user.photoURL;
 				var myName = user.displayName;
 				var myEmail = user.email;
+				console.log("photoURL: " + photoURL);
+				console.log("myName: " + myName);
+				console.log("myEmail: " + myEmail);
 			
 				document.getElementById('google-pic').setAttribute('src', photoURL);
 			
@@ -175,7 +180,22 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 	
 	$scope.jogar = function(){
 		if(document.getElementById(firebase.auth().currentUser.uid)){//faz o jogador ter que entrar na fila par jogar
-			window.location.href = '/jogo'; 
+			//window.location.href = '/jogo'; 
+			console.log("FIREBASE USER UID: " + firebase.auth().currentUser.uid);
+			console.log("canPlay: " + canPlay);
+			canPlay = true;
+			console.log("canPlay: " + canPlay);
+
+			firebase.auth().onAuthStateChanged(function(user){
+				if(user){//logado
+					window.location.href = '/jogo';
+					console.log("FIREBASE USER UID: " + firebase.auth().currentUser.uid);					
+				}else{//nao logado
+					//window.location.href = '/'; 
+				}
+				
+			})
+			
 		}else{
 			console.log("Entre na fila");
 		}
