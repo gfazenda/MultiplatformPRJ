@@ -4,6 +4,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	$scope.enemyTurn = false;
 	$scope.waitingTurns = 0;
 	$scope.myCharacter;
+	$scope.partnerCharacter;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -61,6 +62,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	socket.on('sendPartner', function (char) {
 		console.log('got partner');
 		$scope.$apply(function() {
+		$scope.partnerCharacter = char;			
 		$scope.player2URL = char.sprite;
 		$scope.player2HP = char.hp;
 		});
@@ -119,6 +121,34 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		});
 	});
 
+	socket.on('playerDamaged', function (playerUID, damage) {
+		console.log("PLAYER UID É......... " + playerUID);
+		$scope.$apply (function(){
+			var mychar = $scope.myCharacter;
+			console.log("mychar USER ID IS ;;;;;;;;;;;  " + firebase.auth().currentUser.uid);
+			if(playerUID == firebase.auth().currentUser.uid){
+				console.log("PLAYER DAMAGED: " + $scope.myCharacter.class);								
+				$scope.player1HP -= damage;				
+			}
+			else {
+				console.log("PLAYER DAMAGED: " + $scope.partnerCharacter.class);				
+				$scope.player2HP -= damage;				
+			}
+		});
+	});
+
+	socket.on('healPlayer', function (playerInjured) {
+		$scope.$apply (function(){
+			if(playerInjured.uid == firebase.auth().currentUser.uid){
+				console.log("PLAYER 1 HP: " + $scope.player2HP);				
+				$scope.player1HP = playerInjured.character.hp;
+			}
+			else {
+				console.log("PLAYER 2 HP: " + $scope.player2HP);
+				$scope.player2HP = playerInjured.character.hp;				
+			}
+		});
+	});
 
 	socket.on('newRound', function () {
 		$scope.$apply (function(){

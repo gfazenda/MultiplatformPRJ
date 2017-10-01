@@ -147,6 +147,29 @@ var poder;
 var currentMonster;
 var turnCount = 0; //se = 2, monstro ataca
 
+
+healPlayer = function(mage, playerInjured){
+
+	 var hpHealed = mage.power;
+	if((playerInjured.character.hp + hpHealed) <= playerInjured.character.hpMax){ //Descomentar essas linhas quando tiver hp máximo no banco de dados
+//console.log("playerInjureHP: " + playerInjured.character.hp);
+		playerInjured.character.hp += hpHealed;
+	}
+	else {
+		playerInjured.character.hp = playerInjured.character.hpMax;
+	}
+	io.sockets.emit('healPlayer', playerInjured);
+}
+
+damageMonster = function(damage){
+	currentMonster.hp -= damage;
+	if(currentMonster.hp <= 0){
+		getNewEnemy();
+		io.sockets.emit('newRound');
+	}
+	
+}
+
 attackMage = function(mage, numberAttack){
 	
 	//MAGE
@@ -166,7 +189,7 @@ attackMage = function(mage, numberAttack){
 			
 			case 2:
 			
-				
+				healPlayer(mage, players[0]);
 				break;
 			
 			case 3:
@@ -175,6 +198,7 @@ attackMage = function(mage, numberAttack){
 			
 			case 4:
 			
+				damageMonster(damage);
 				break;
 				
 			default:
@@ -373,7 +397,7 @@ io.sockets.on('connection', function (client) {
 					if(existingCharacter == null){
 					var newPlayer = new playerInfo(uid,obj.val());
 					players.push(newPlayer);
-					console.log('size '+ players.length);
+					console.log('size ' + players.length);
 					if(players.length == 1){
 						client.emit('sendCharacter', players[0].character); //envia o objeto do client
 					}else{
@@ -428,7 +452,7 @@ io.sockets.on('connection', function (client) {
 		io.sockets.emit('enemyDamaged',currentMonster.hp);
 		turnCount++;
 		if(turnCount>=2){
-			doEnemyAttack();
+			io.sockets.emit('playerDamaged', getRandomPlayer(), doEnemyAttack());
 			turnCount = 0;
 			io.sockets.emit('playersTurn');
 		}
@@ -460,8 +484,31 @@ io.sockets.on('connection', function (client) {
 	// });
 
 	doEnemyAttack = function(){
-		console.log('destroying players!!!!!!!')
+		console.log('destroying players!!!!!!!');
+
+		var damage = 1;
+
+		return damage;
 		
+	}
+
+	getRandomPlayer = function(){
+		var playerNumber = getRandomInt(3,1);
+		//console.log("enemyNumber is : " + enemyNumber);
+		switch(playerNumber)   {
+			case 1:
+				//pega player 1
+				console.log("player[0].uid: " + players[0].uid);
+				return players[0].uid;
+				break;
+			case 2:
+				//pega player 2
+				console.log("player[1].uid: " + players[1].uid);				
+				return players[1].uid;
+				break;
+			default:
+				break;
+		}  
 	}
 	
 	//-------------------------------------------------------------
