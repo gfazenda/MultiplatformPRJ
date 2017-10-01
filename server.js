@@ -380,15 +380,24 @@ io.sockets.on('connection', function (client) {
 						client.emit('sendCharacter', players[1].character); //envia o objeto do client
 						client.emit('sendPartner', players[0].character);//envia 'parceiro' do client
 						client.broadcast.emit('sendPartner', players[1].character); //envia 'parceiro' do outro client
+						console.log('send monster')
+						getNewEnemy();
 					}
 				}else{
-					client.emit('sendCharacter', existingCharacter); 
+					client.emit('sendCharacter', existingCharacter);
+					if(players.length == 2){
+						existingCharacter == players[0] ? client.broadcast.emit('sendPartner', players[1].character) : 
+						client.broadcast.emit('sendPartner', players[0].character);
+					}
+
 				}
 				}
 			});
 		})
-		if(players.length == 2)
+		if(players.length == 2){
+			console.log('send monster')
 			getNewEnemy();
+		}
 	
 	});
 	//-------------------------------------------------------------
@@ -402,6 +411,7 @@ io.sockets.on('connection', function (client) {
 				return players[i].character;
 			}
 		}
+		return null;
 	}
 
 	client.on('attack', function (info) { 
