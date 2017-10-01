@@ -147,6 +147,7 @@ var poder;
 var currentMonster;
 var turnCount = 0; //se = 2, monstro ataca
 
+var enemyBurned = false;
 
 healPlayer = function(mage, playerInjured){
 
@@ -161,13 +162,10 @@ healPlayer = function(mage, playerInjured){
 	io.sockets.emit('healPlayer', playerInjured);
 }
 
-damageMonster = function(damage){
-	currentMonster.hp -= damage;
-	if(currentMonster.hp <= 0){
-		getNewEnemy();
-		io.sockets.emit('newRound');
-	}
-	
+fireball = function(damage){
+
+	enemyBurned = true;
+	damageMonster(damage*3)
 }
 
 attackMage = function(mage, numberAttack){
@@ -183,8 +181,8 @@ attackMage = function(mage, numberAttack){
 	switch(numberAttack){
 			
 			case 1:
-			console.log("damage mage: " + damage);
-			damageMonster(damage);
+				console.log("damage mage: " + damage);
+				damageMonster(damage);
 				break;
 			
 			case 2:
@@ -198,7 +196,7 @@ attackMage = function(mage, numberAttack){
 			
 			case 4:
 			
-				damageMonster(damage);
+				fireball(damage);
 				break;
 				
 			default:
@@ -239,6 +237,7 @@ attackWarrior = function(warrior, numberAttack){
 damageMonster = function(damage){
 	currentMonster.hp -= damage;
 	if(currentMonster.hp <= 0){
+		enemyBurned = false;
 		getNewEnemy();
 		io.sockets.emit('newRound');
 	}
@@ -452,6 +451,9 @@ io.sockets.on('connection', function (client) {
 		io.sockets.emit('enemyDamaged',currentMonster.hp);
 		turnCount++;
 		if(turnCount>=2){
+			if(enemyBurned){
+				damageMonster(10);
+			}
 			io.sockets.emit('playerDamaged', getRandomPlayer(), doEnemyAttack());
 			turnCount = 0;
 			io.sockets.emit('playersTurn');
