@@ -26,6 +26,14 @@
                 left: 38%;
             }
 
+            #cardAbove2 {
+                position: absolute;
+                top: 5%;
+                left: 50%;
+                font-size: 20px;
+                color: white;
+            }
+
             #infoCardAbove {
                 position: absolute;
                 top: 5%;
@@ -129,7 +137,7 @@
                         <!--PLAYERS-->
                         <div id="player1Above">
                             <p id="playerHP" ng-bind="player1HP"></p>
-                            <img  ng-src={{player1URL}} width="100%" height="100%"> </img>
+                            <img ng-src={{player1URL}} width="100%" height="100%"> </img>
                         </div>
 
                         <div id="player2Above">
@@ -141,27 +149,37 @@
                         <!--ENEMY-->
                         <div id="enemyAbove">
                             <p id="enemyHP" ng-bind="enemyHP"></p>
-                            <img  ng-src={{enemyURL}} width="150" height="150"></img>
+                            <img  id="enemyImg" ng-src={{enemyURL}} width="150" height="150"></img>
 					
                         </div>
                         <!--ENEMY-->
+
+                        <div id="cardAbove2" class="card teal" ng-if="showActionText"> 
+                            <div class="card-content">
+                                
+                                <div ng-bind="actionText">
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
                         <div id="cardAbove" class="card teal " ng-if="!enemyTurn"> 
                             <div class="card-content">
                                 
                                 <div ng-if="classMage">
-                                    <a class="waves-effect waves-light btn" ng-click="attack(1)">Attack</a>
+                                    <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
                                 
                                     <a class="waves-effect waves-light btn" ng-click="attack(2)">Cure</a>
 
-                                    <a class="waves-effect waves-light btn" ng-click="attack(4)">Fireball</a>
+                                    <a class="waves-effect waves-light btn" ng-click="attack(4)" onclick="Materialize.fadeInImage('#enemyImg')">Fireball</a>
                                 </div>
 
                                 <div ng-if="!classMage">
-                                    <a class="waves-effect waves-light btn" ng-click="attack(1)">Attack</a>
+                                    <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
                                 
                                     <a class="waves-effect waves-light btn" ng-click="attack(2)">Attract</a>
 
-                                    <a class="waves-effect waves-light btn" ng-click="attack(4)">Fury</a>
+                                    <a class="waves-effect waves-light btn" ng-click="attack(3)">Fury</a>
                                 </div>
                                 
                             </div>

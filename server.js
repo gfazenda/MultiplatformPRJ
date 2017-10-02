@@ -152,8 +152,7 @@ var enemyBurned = false;
 healPlayer = function(mage, playerInjured){
 
 	 var hpHealed = mage.power;
-	if((playerInjured.character.hp + hpHealed) <= playerInjured.character.hpMax){ //Descomentar essas linhas quando tiver hp máximo no banco de dados
-//console.log("playerInjureHP: " + playerInjured.character.hp);
+	if((playerInjured.character.hp + hpHealed) <= playerInjured.character.hpMax){ 
 		playerInjured.character.hp += hpHealed;
 	}
 	else {
@@ -182,12 +181,14 @@ attackMage = function(mage, numberAttack){
 			
 			case 1:
 				console.log("damage mage: " + damage);
+				io.sockets.emit('actionText', 'Attack');
 				damageMonster(damage);
 				break;
 			
 			case 2:
 			
-				healPlayer(mage, players[0]);
+				io.sockets.emit('actionText', 'Cure');
+				healPlayer(mage, players[0]);				
 				break;
 			
 			case 3:
@@ -196,6 +197,7 @@ attackMage = function(mage, numberAttack){
 			
 			case 4:
 			
+				io.sockets.emit('actionText', 'Fireball');
 				fireball(damage);
 				break;
 				
@@ -216,14 +218,19 @@ attackWarrior = function(warrior, numberAttack){
 	switch(numberAttack){
 			
 			case 1:
+
+				io.sockets.emit('actionText', 'Attack');
 				damageMonster(damage);
 				break;
 			
 			case 2:
-			
+
+				io.sockets.emit('actionText', 'Attract');
 				break;
 			
 			case 3:
+
+				io.sockets.emit('actionText', 'Fury');
 				damageMonster(damage*3);
 				break;
 				

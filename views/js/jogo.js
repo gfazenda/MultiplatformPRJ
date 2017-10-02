@@ -1,4 +1,4 @@
-angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
+angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeout) {
 	
 	$scope.round = 0;
 	$scope.enemyTurn = false;
@@ -6,6 +6,8 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	$scope.myCharacter;
 	$scope.partnerCharacter;
 	$scope.classMage = false;
+	$scope.actionText;
+	$scope.showActionText = false;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -118,6 +120,20 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		//});
 		$scope.enemyTurn = true;
 	}
+
+	socket.on('actionText', function(text){
+
+		//$scope.$apply (function(){
+		$scope.actionText = text;
+		$scope.showActionText = true;
+		$timeout(function(){
+			$scope.showActionText = false;	
+			console.log("showActionText: " + $scope.showActionText);		
+		}, 2000);
+		console.log("showActionText: " + $scope.showActionText);
+	//});
+		//$scope.showActionText = false;
+	});
 
 	socket.on('enemyDamaged', function (hpMonster) {
 		
