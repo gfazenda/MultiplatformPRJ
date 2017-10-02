@@ -5,6 +5,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 	$scope.waitingTurns = 0;
 	$scope.myCharacter;
 	$scope.partnerCharacter;
+	$scope.classMage = false;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -56,6 +57,10 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http) {
 		$scope.myCharacter = char;
 		$scope.player1URL = char.sprite;
 		$scope.player1HP = char.hp;
+		if(char.class == "mage"){
+			$scope.classMage = true;
+		}
+		console.log($scope.classMage);
 		})
 	});
 

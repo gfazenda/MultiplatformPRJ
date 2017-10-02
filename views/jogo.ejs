@@ -148,11 +148,21 @@
                         <div id="cardAbove" class="card teal " ng-if="!enemyTurn"> 
                             <div class="card-content">
                                 
+                                <div ng-if="classMage">
                                     <a class="waves-effect waves-light btn" ng-click="attack(1)">Attack</a>
                                 
                                     <a class="waves-effect waves-light btn" ng-click="attack(2)">Cure</a>
 
                                     <a class="waves-effect waves-light btn" ng-click="attack(4)">Fireball</a>
+                                </div>
+
+                                <div ng-if="!classMage">
+                                    <a class="waves-effect waves-light btn" ng-click="attack(1)">Attack</a>
+                                
+                                    <a class="waves-effect waves-light btn" ng-click="attack(2)">Attract</a>
+
+                                    <a class="waves-effect waves-light btn" ng-click="attack(4)">Fury</a>
+                                </div>
                                 
                             </div>
                         </div>
