@@ -495,10 +495,13 @@ io.sockets.on('connection', function (client) {
 				userAttractedUid = info.uid;
 			}
 		}
-		io.sockets.emit('enemyDamaged',currentMonster.hp);
-		turnCount++;
-		CheckMonsterAttack();
-		console.log('monster hp is ' + currentMonster.hp);
+		setTimeout(function(){
+
+			io.sockets.emit('enemyDamaged',currentMonster.hp);
+			turnCount++;
+			CheckMonsterAttack();
+			console.log('monster hp is ' + currentMonster.hp);
+		}, 2000);
 	});
 
 	CheckMonsterAttack = function(){
@@ -506,28 +509,51 @@ io.sockets.on('connection', function (client) {
 			if(enemyBurned){
 				damageMonster(10);
 			}
-			io.sockets.emit('playerDamaged', getRandomPlayer(), doEnemyAttack());
-			turnCount = 0;
-			io.sockets.emit('playersTurn');
+			var damage = doEnemyAttack();
+			setTimeout(function(){
+
+				io.sockets.emit('playerDamaged', getRandomPlayer(), damage);
+				turnCount = 0;
+				io.sockets.emit('playersTurn');
+			}, 2000);
 		}
 	}
-
 
 	client.on('passTurn', function () { 
 		turnCount++;
 		CheckMonsterAttack();
+	});
+	
+	client.on('dead', function (uid) { 
+		console.log(players.length);
+		for(var i=0;i<players.length;i++){
+			if(players[i].uid == uid){
+				players.splice(i,1);
+			}
+		}
+		console.log(players.length);
+		if(players.length == 0){
+			console.log('game over');
+			io.sockets.emit('gameOver');
+		}
+		
 	});
 
 	doEnemyAttack = function(){
 		console.log('destroying players!!!!!!!');
 
 		var damage = currentMonster.power;
+		//setTimeout(function(){
+			io.sockets.emit('actionText', 'Attack', false);
 
-		return damage;
+		//}, 1000);
+					return damage;
+
+
 		
 	}
 
-	CheckAttactUsed = function(id){
+	CheckAttractUsed = function(id){
 		if(usedAttract){
 			if(players[id].uid != userAttractedUid){
 				id = ((id) == 0) ? 1 : 0;
@@ -538,8 +564,14 @@ io.sockets.on('connection', function (client) {
 	}
 
 	getRandomPlayer = function(){
+		if(players.length == 0){
+			return;
+		}
+		else if(players.length == 1){
+			return players[0].uid;
+		}
 		var playerNumber = getRandomInt(3,1);
-		var id = CheckAttactUsed(playerNumber-1);
+		var id = CheckAttractUsed(playerNumber-1);
 		//console.log("enemyNumber is : " + enemyNumber);
 		
 		return players[id].uid;
