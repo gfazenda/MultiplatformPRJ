@@ -8,6 +8,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	$scope.classMage = false;
 	$scope.actionText;
 	$scope.showActionText = false;
+	$scope.cureActive = false;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -48,6 +49,10 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		
 	}
 
+	$scope.cureSelect = function(state){
+		$scope.cureActive = state;
+	}
+
 	
 	
 	//socket----------------------------------------------------------------------------------
@@ -59,6 +64,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		$scope.myCharacter = char;
 		$scope.player1URL = char.sprite;
 		$scope.player1HP = char.hp;
+		//$scope.player1Power = char.power;
 		if(char.class == "mage"){
 			$scope.classMage = true;
 		}
@@ -72,6 +78,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		$scope.partnerCharacter = char;			
 		$scope.player2URL = char.sprite;
 		$scope.player2HP = char.hp;
+		//$scope.player2Power = char.power;		
 		});
 	});
 
@@ -105,6 +112,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		 $scope.$apply(function () {
 			$scope.enemyURL = inimigo.sprite;
 			$scope.enemyHP = inimigo.hp;
+			$scope.enemyPower = inimigo.power;
 		 });
 
 	});
@@ -167,6 +175,15 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 			else {
 				console.log("PLAYER 2 HP: " + $scope.player2HP);
 				$scope.player2HP = playerInjured.character.hp;				
+			}
+		});
+	});
+
+	socket.on('blessedLuck', function(powerMonster, powerWarrior){
+		$scope.$apply (function(){
+			$scope.enemyPower = powerMonster;
+			if(!classMage){
+				$scope.myCharacter.power = powerWarrior;				
 			}
 		});
 	});

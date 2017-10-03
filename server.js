@@ -149,16 +149,24 @@ var turnCount = 0; //se = 2, monstro ataca
 
 var enemyBurned = false;
 
-healPlayer = function(mage, playerInjured){
+healPlayer = function(mage, className){
 
-	 var hpHealed = mage.power;
-	if((playerInjured.character.hp + hpHealed) <= playerInjured.character.hpMax){ 
-		playerInjured.character.hp += hpHealed;
-	}
-	else {
-		playerInjured.character.hp = playerInjured.character.hpMax;
-	}
-	io.sockets.emit('healPlayer', playerInjured);
+	var hpHealed = mage.power;
+	var playerInjured = players;
+	var playerNumber;
+	for (i = 0; i < playerInjured.length; i++) {
+		if(playerInjured[i].character.class == className){
+			playerNumber = i;
+			if((playerInjured[i].character.hp + hpHealed) <= playerInjured[i].character.hpMax){ 
+				playerInjured[i].character.hp += hpHealed;
+			}
+			else {
+				playerInjured[i].character.hp = playerInjured[i].character.hpMax;
+			}
+		}
+	} 	
+	
+	io.sockets.emit('healPlayer', playerInjured[playerNumber]);
 }
 
 fireball = function(damage){
@@ -167,13 +175,28 @@ fireball = function(damage){
 	damageMonster(damage*3)
 }
 
+blessedLuck = function(){
+	// 4 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
+	currentMonster.power = currentMonster.power/2;
+	var playerNumber;
+	for (i = 0; i < players.length; i++) {
+		playerNumber = i;
+		if(players[i].character.class == "warrior"){
+			players[i].character.power = players[i].character.power*2;
+		}
+	} 	
+
+	io.sockets.emit('blessedLuck', currentMonster.power, players[playerNumber].character.power);
+}
+
 attackMage = function(mage, numberAttack){
 	
 	//MAGE
 	// 1 - Ataque Básico
-	// 2 - Poder de cura
-	// 3 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
-	// 4 - Bola de fogo (queima inimigo, dano por turno)
+	// 2 - Poder de cura: Mage
+	// 3 - Poder de cura: Warrior
+	// 4 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
+	// 5 - Bola de fogo (queima inimigo, dano por turno)
 	
 	var damage = mage.power;
 
@@ -188,15 +211,23 @@ attackMage = function(mage, numberAttack){
 			case 2:
 			
 				io.sockets.emit('actionText', 'Cure');
-				healPlayer(mage, players[0]);				
+				healPlayer(mage, "mage");				
 				break;
 			
 			case 3:
 			
+				io.sockets.emit('actionText', 'Cure');
+				healPlayer(mage, "warrior");	
 				break;
 			
 			case 4:
 			
+				io.sockets.emit('actionText', 'Blessed Luck');
+				blessedLuck();
+				break;
+
+			case 5:
+				
 				io.sockets.emit('actionText', 'Fireball');
 				fireball(damage);
 				break;
@@ -495,7 +526,7 @@ io.sockets.on('connection', function (client) {
 	doEnemyAttack = function(){
 		console.log('destroying players!!!!!!!');
 
-		var damage = 1;
+		var damage = currentMonster.power;
 
 		return damage;
 		

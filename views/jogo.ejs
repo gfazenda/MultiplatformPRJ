@@ -167,11 +167,22 @@
                             <div class="card-content">
                                 
                                 <div ng-if="classMage">
-                                    <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
-                                
-                                    <a class="waves-effect waves-light btn" ng-click="attack(2)">Cure</a>
+                                    <div ng-if="!cureActive">
+                                        <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
+                                    
+                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(true)">Cure</a>
 
-                                    <a class="waves-effect waves-light btn" ng-click="attack(4)" onclick="Materialize.fadeInImage('#enemyImg')">Fireball</a>
+                                        <a class="waves-effect waves-light btn" ng-click="attack(4)">Blessed Luck</a>
+
+                                        <a class="waves-effect waves-light btn" ng-click="attack(5)" onclick="Materialize.fadeInImage('#enemyImg')">Fireball</a>
+                                    </div>
+                                    <div ng-if="cureActive">
+                                        <a class="waves-effect waves-light btn" ng-click="attack(3); cureSelect(false)">Warrior</a>
+                                    
+                                        <a class="waves-effect waves-light btn" ng-click="attack(2); cureSelect(false)">Mage</a>
+
+                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(false)">Cancel</a>
+                                    </div>
                                 </div>
 
                                 <div ng-if="!classMage">
