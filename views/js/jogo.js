@@ -127,6 +127,9 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 												});
 		//});
 		$scope.enemyTurn = true;
+		if(numberAttack==3 && $scope.myCharacter.class == "warrior"){
+			$scope.waitingTurns = 2;
+		}
 	}
 
 	socket.on('actionText', function(text){
@@ -196,6 +199,11 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 
 	socket.on('playersTurn', function () {
 		$scope.$apply (function(){
+			if($scope.waitingTurns > 0){
+				$scope.waitingTurns--;
+				socket.emit('passTurn');
+				return;
+			}
 			$scope.enemyTurn = false;
 		});
 	});
