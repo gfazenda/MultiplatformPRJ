@@ -140,7 +140,7 @@ app.post('/', function(request, response){
 
 
 var players = [];
-
+var personagens = [];
 var jogadores = [];
 var jogadoresRef = [];
 var poder;
@@ -313,17 +313,17 @@ io.sockets.on('connection', function (client) {
  
 	//personagemEscolha-----------------------------------------\/
 	client.on('tragaPersonagensModelos', function () {
-		var personagemRef = dataBase.ref('/players');
+		var personagemRef = dataBase.ref('/modeloPersonagem');
 
 		personagemRef.on('value', function(snapshot){
 			snapshot.forEach(function(id) {
-				presonagens[presonagens.length] = id.val();
+				personagens[personagens.length] = id.val();
 			});
 		})
 		
 		/*mod = personagensModelos;*/
-		client.emit('levaPersonagensModelos', presonagens);
-		client.broadcast.emit('levaPersonagensModelos', presonagens);
+		client.emit('levaPersonagensModelos', personagens);
+		client.broadcast.emit('levaPersonagensModelos', personagens);
 	});
 	
     //----------------------------------------------------------/\
