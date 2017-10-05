@@ -9,6 +9,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
 		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylePages.css" media="screen"></link>
 			
 		<script>
             // Initialize Firebase
@@ -25,8 +26,15 @@
         </script>
 	</head>
 	
-	<body> 
+	<body class="teal lighten-2"> 
+	<main>
 		<div id="ini" ng-app="myIni" ng-controller="ini">
+		
+			<div class="row">
+					<nav class="light-blue lighten-1" role="navigation">
+						<div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Game Logo</a></div>
+					</nav>
+			</div> 
 			
 			<section>
 				<pre id="chat"></pre>
@@ -83,15 +91,51 @@
 			
 
 			<!-- <p>Usuarios Logados</p><p id="usuariosQantidade"><%= userbytwo %></p> -->
-
-			<a class="waves-effect waves-light btn" ng-click="entrarFila()">Entrar Fila</a>
-			<a class="waves-effect waves-light btn" id="jogarBtn" ng-click="jogar()">Jogar</a>
-			<a class="waves-effect waves-light btn" id="signOut" ng-click="signOut()">sign Out</a>
+			<div class="row">
+				<div class="card teal col l3  offset-l4"> 
+						<div class="card-content center-align">
+							<a class="waves-effect waves-light btn" ng-click="entrarFila()">Entrar Fila</a>
+							<a class="waves-effect waves-light btn" id="jogarBtn" ng-click="jogar()">Jogar</a>
+							<a class="waves-effect waves-light btn" id="signOut" ng-click="signOut()">sign Out</a>			
+						</div>
+				</div>
+			</div>
+			
 	
 
 		</div>
+		</main>
 
-		
+		<footer class="page-footer orange ">
+            <div class="container">
+                <div class="row">
+                    <div class="col l6 s12">
+                        <h5 class="white-text">About</h5>
+                        <p class="grey-text text-lighten-4">Game developed to study and practice web development.</p>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Settings</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Connect</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="container">
+                    Made by Bernardo Alvarez Braga, Gabriel Fazenda and Matheus Nunes
+                </div>
+            </div>
+        </footer> 
+
 		<script src="js/inicio.js"></script>
 		<script src="js/firebaseAuth.js"></script>
 

@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
 		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylePages.css" media="screen"></link>
    
 		
 		<script>
@@ -26,22 +27,42 @@
 
 	</head>
 	
-	<body> 
-     <script src="/socket.io/socket.io.js"></script>
-     <script>
-       var socket = io('http://localhost:8080');
-         
-     </script>
+	<body class="teal lighten-2"> 
+    	<script src="/socket.io/socket.io.js"></script>
+    	<script>
+    		var socket = io('http://localhost:8080');
+    	</script>
+		<main>
 		<div id="cantanier" ng-app="myApp" ng-controller="Game">
+			<div class="row">
+					<nav class="light-blue lighten-1" role="navigation">
+						<div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Game Logo</a></div>
+					</nav>
+			</div> 
 
-			<button id="gone" href="/inicio" ng-click="signInWithGoogle()"> sign In with google</button>
-			
-			<button id="signOut" ng-click="signOut()"> 
-				sign Out
-			</button>
-			
+			<div class="row">
+				<div class="card teal col l6 offset-l3"> 
+						<div class="card-content center-align">
+									
+							<p id="welcomeText"> Welcome to Medieval Battle! </p>
+								
+						</div>
+				</div>
+				
+			</div>
+
+			<div class="row">
+				<div class="card teal col l2  offset-l5"> 
+						<div class="card-content center-align">
+									
+							<button class="waves-effect waves-light btn" id="gone" href="/inicio" ng-click="signInWithGoogle()"> Sign in with Google</button>
+								
+						</div>
+				</div>
+				
+			</div>
 		</div>
-		
+		</main>
 		<!-- <div id="personagem" ng-app="myPersonagem" ng-controller="personagem"> -->
 			
 			<!-- <p>Add Char: <input id="addChar"  /></p> -->
@@ -49,6 +70,36 @@
 			<!-- <button id="addCharbtn" ng-click="criaPersonagem()"> addChar </button> -->
 		
 		<!-- </div> -->
+
+		<footer class="page-footer orange ">
+            <div class="container">
+                <div class="row">
+                    <div class="col l6 s12">
+                        <h5 class="white-text">About</h5>
+                        <p class="grey-text text-lighten-4">Game developed to study and practice web development.</p>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Settings</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Connect</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="container">
+                    Made by Bernardo Alvarez Braga, Gabriel Fazenda and Matheus Nunes
+                </div>
+            </div>
+        </footer> 
 		
 		<script src="js/firebaseAuth.js"></script>
 		
