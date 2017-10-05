@@ -106,13 +106,14 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		ataque1 : '1',
 		ataque2 : '2',
 		ataque3 : '3'
-    };
+	};
+	
+	socket.on('turnPenalty', function (uid,turns) {
+		if(uid == firebase.auth().currentUser.uid)
+			$scope.waitingTurns = turns;
+	});
 	
 	socket.on('getEnemy', function (inimigo) {
-		
-		console.log("got enemy");  
-		console.log(inimigo);  
-		
 		 $scope.$apply(function () {
 			$scope.enemyURL = inimigo.sprite;
 			$scope.enemyHP = inimigo.hp;
@@ -122,18 +123,10 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	});
 
 	$scope.attack = function(numberAttack){
-		//console.log("CURRENT USER: " + $scope.getCharacter(firebase.auth().currentUser.uid));
-		//console.log("CLASSE: " + $scope.getCharacter(firebase.auth().currentUser).class);
-		
-		//$scope.$apply (function(){
-			socket.emit('attack',{uid: firebase.auth().currentUser.uid, 
-													nAtaque: numberAttack
-												});
-		//});
-		
+		socket.emit('attack',{uid: firebase.auth().currentUser.uid, 
+													nAtaque: numberAttack});		
 		$scope.enemyTurn = true;
 		if(numberAttack==3 && $scope.myCharacter.class == "warrior"){
-			socket.emit('dead', firebase.auth().currentUser.uid);
 			$scope.waitingTurns = 2;
 		}
 	}
@@ -144,24 +137,25 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 
 	socket.on('actionText', function(text, player = true){
 		$timeout.cancel($scope.promise);
+		
 		$scope.$apply (function(){
-		$scope.actionText = text;
-		var delay = 2000;
-		if(player){
-			$scope.showActionText = true;
-		}else{
-			$scope.showActionTextMonster = true;
-			delay = 1500;
-		}
-		$scope.promise =
-		$timeout(function(){
-			$scope.showActionText = false;	
-			$scope.showActionTextMonster = false;
-			console.log("showActionText: " + $scope.showActionText);		
-		}, delay);
-		console.log("showActionText: " + $scope.showActionText);
-	});
-		//$scope.showActionText = false;
+			$scope.actionText = text;
+			var delay = 2000;
+			if(player){
+				$scope.showActionText = true;
+			}else{
+				$scope.showActionTextMonster = true;
+				delay = 1500;
+			}
+			$scope.promise =
+			$timeout(function(){
+				$scope.showActionText = false;	
+				$scope.showActionTextMonster = false;
+				console.log("showActionText: " + $scope.showActionText);		
+			}, delay);
+			console.log("showActionText: " + $scope.showActionText);
+		});
+
 	});
 
 	socket.on('enemyDamaged', function (hpMonster) {
@@ -175,7 +169,6 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		console.log("PLAYER UID É......... " + playerUID);
 		$scope.$apply (function(){
 			var mychar = $scope.myCharacter;
-			console.log("mychar USER ID IS ;;;;;;;;;;;  " + firebase.auth().currentUser.uid);
 			if(playerUID == firebase.auth().currentUser.uid){
 				console.log("PLAYER DAMAGED: " + $scope.myCharacter.class);								
 				$scope.player1HP -= damage;

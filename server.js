@@ -128,14 +128,6 @@ app.post('/', function(request, response){
 			console.log("deslogadoS");
 		}
 	});
-
-	// var restaurantRef = dataBase.ref('/personagem');
-	// restaurantRef.once('value', function(snapshot){
-		// //console.log(snapshot.val());
-		// var snap = req.body.snapshot.val();
-		// console.log(snap);
-
-	// })
 });
 
 
@@ -149,6 +141,7 @@ var turnCount = 0; //se = 2, monstro ataca
 var usedAttract = false;
 var userAttractedUid;
 var enemyBurned = false;
+var monsterDamageLimit = 7;
 
 healPlayer = function(mage, className){
 
@@ -162,12 +155,6 @@ healPlayer = function(mage, className){
 			if(playerInjured[i].character.hp > playerInjured[i].character.hpMax){
 				playerInjured[i].character.hp = playerInjured[i].character.hpMax;
 			}
-			// if((playerInjured[i].character.hp + hpHealed) <= playerInjured[i].character.hpMax){ 
-			// 	playerInjured[i].character.hp += hpHealed;
-			// }
-			// else {
-			// 	playerInjured[i].character.hp = playerInjured[i].character.hpMax;
-			// }
 		}
 	} 	
 	
@@ -183,6 +170,8 @@ fireball = function(damage){
 blessedLuck = function(){
 	// 4 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
 	currentMonster.power = currentMonster.power/2;
+	if(currentMonster.power < 1) currentMonster.power = 1;
+
 	var playerNumber;
 	for (i = 0; i < players.length; i++) {
 		playerNumber = i;
@@ -297,9 +286,7 @@ getNewEnemy = function(damage){
 		snapshot.forEach(function(enemy){
 			if(enemy.val().name == nameEnemy){
 				currentMonster = enemy.val();
-				console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
-				// client.emit('trazInimigo', enemy.val());
-				// client.broadcast.emit('trazInimigo', enemy.val());
+				// console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
 				io.sockets.emit('getEnemy', enemy.val());
 			}
 		})
@@ -348,10 +335,10 @@ io.sockets.on('connection', function (client) {
 
 		if(jogadores.length > 0){
 			for(var i = 0; i <= jogadores.length-1; i++){
-				console.log(jogadoresRef);
+				// console.log(jogadoresRef);
 				if(jogadoresRef[i].uid == jogador.uid){
-					console.log("jogadores[i].uid "+jogadores.length);
-					console.log("jogador.uid "+jogador.uid);
+					// console.log("jogadores[i].uid "+jogadores.length);
+					// console.log("jogador.uid "+jogador.uid);
 					contExisteNaLista = 1;
 				}
 			}
@@ -359,7 +346,7 @@ io.sockets.on('connection', function (client) {
 	
 	
 		if(contExisteNaLista != 1){
-			console.log(jogador);
+			// console.log(jogador);
 			jogadoresRef[jogadores.length] = jogador;
 			jogadores[jogadores.length] = "<p id="+ jogador.uid +">" + jogador.name + "</p>";
 			client.emit('userOnClient', jogadores);
@@ -372,34 +359,9 @@ io.sockets.on('connection', function (client) {
 		client.emit('filaReload', jogadores);
 		client.broadcast.emit('filaReload', jogadores);
 	});
-	//-----------------------------------------------------------/\
-	
-	//jogo-------------------------------------------------------\/
-	
-	// client.on('enviaAtacanteAtaque', function (atacante) { // calclar dano e verificar quem esta atacando atacando
-	// 	//console.log(atacante.uid);
-	// 	//console.log(atacante.nAtaque);
-	// 	//console.log(atacante.turno);
-	// 	pegaPersonagem(atacante.uid);
-		
-	// 	if(atacante.nAtaque == 1){
-	// 		poder = poder + (poder/10)
-	// 	}else if(atacante.nAtaque == 2){
-	// 		poder = poder + (poder*0.5)
-	// 	}else if(atacante.nAtaque == 3){
-	// 		poder = poder*2
-	// 	}
-		
-	// 	console.log(poder)
-		
-	// 	client.emit('turno', atacante.turno);
-	// });
-	//-------------------------------------------------------------
 	
 	client.on('pedeOsPlayers', function () { 
 		getNewEnemy();
-		// client.emit('enviaOsPlayers', jogadoresRef);
-		// client.broadcast.emit('enviaOsPlayers', jogadoresRef);
 		io.sockets.emit('enviaOsPlayers', jogadoresRef);
 	});
 	
@@ -416,10 +378,6 @@ io.sockets.on('connection', function (client) {
 				index++;
 			});
 		})
-		
-		// console.log(players);
-		// client.emit('enviaOsPersonagens', players);
-		// client.broadcast.emit('enviaOsPersonagens', players);
 		io.sockets.emit('enviaOsPersonagens', players);
 	});
 	
@@ -435,19 +393,18 @@ io.sockets.on('connection', function (client) {
 		personagemRef.once('value', function(snapshot){
 			snapshot.forEach(function(obj) {
 				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
-					console.log('sending char found')
+
 					var existingCharacter = getCharacter(uid);
 					if(existingCharacter == null){
 					var newPlayer = new playerInfo(uid,obj.val());
 					players.push(newPlayer);
-					console.log('size ' + players.length);
 					if(players.length == 1){
 						client.emit('sendCharacter', players[0].character); //envia o objeto do client
 					}else{
 						client.emit('sendCharacter', players[1].character); //envia o objeto do client
 						client.emit('sendPartner', players[0].character);//envia 'parceiro' do client
 						client.broadcast.emit('sendPartner', players[1].character); //envia 'parceiro' do outro client
-						console.log('send monster')
+
 						getNewEnemy();
 					}
 				}else{
@@ -462,7 +419,6 @@ io.sockets.on('connection', function (client) {
 			});
 		})
 		if(players.length == 2){
-			console.log('send monster')
 			getNewEnemy();
 		}
 	
@@ -471,8 +427,6 @@ io.sockets.on('connection', function (client) {
 	
 
 	getCharacter = function(uid){
-		console.log('blabla ' + players.length)
-		console.log(uid)
 		for(var i=0;i<players.length;i++){
 			if(players[i].uid == uid){
 				return players[i].character;
@@ -483,7 +437,7 @@ io.sockets.on('connection', function (client) {
 
 	client.on('attack', function (info) { 
 		//client.emit('enviaOsPlayers', jogadoresRef);
-		console.log(info);
+		// console.log(info);
 		attacker = getCharacter(info.uid);
 		//console.log("CLASSE: " + character.class);
 		if(attacker.class == "mage"){
@@ -495,12 +449,10 @@ io.sockets.on('connection', function (client) {
 				userAttractedUid = info.uid;
 			}
 		}
+		io.sockets.emit('enemyDamaged',currentMonster.hp);
 		setTimeout(function(){
-
-			io.sockets.emit('enemyDamaged',currentMonster.hp);
 			turnCount++;
 			CheckMonsterAttack();
-			console.log('monster hp is ' + currentMonster.hp);
 		}, 2000);
 	});
 
@@ -511,7 +463,6 @@ io.sockets.on('connection', function (client) {
 			}
 			var damage = doEnemyAttack();
 			setTimeout(function(){
-
 				io.sockets.emit('playerDamaged', getRandomPlayer(), damage);
 				turnCount = 0;
 				io.sockets.emit('playersTurn');
@@ -543,6 +494,35 @@ io.sockets.on('connection', function (client) {
 		console.log('destroying players!!!!!!!');
 
 		var damage = currentMonster.power;
+		var chance = getRandomInt(1,10);
+		console.log('my chance' + chance)
+		if(chance <= 4){
+			console.log('doing sp atk');
+			switch(currentMonster.SpecialAttack){
+				case 1:{
+					
+					if(usedAttract){
+						io.sockets.emit('playerDamaged', userAttractedUid, (damage*2));
+					}else{
+						for(var i=0;i<players.length;i++){
+							io.sockets.emit('playerDamaged', players[i].uid, damage);
+						}
+					}
+					return 0;
+				}
+				break;
+				case 2:{
+					io.sockets.emit('turnPenalty', getRandomPlayer(), getRandomInt(1,2));
+				}
+				break;
+				case 3:{
+					currentMonster.power *= 1.5;
+					if(currentMonster.power > monsterDamageLimit)
+						currentMonster.power = monsterDamageLimit;
+				}
+				break;	
+			}
+		}
 		//setTimeout(function(){
 			io.sockets.emit('actionText', 'Attack', false);
 
@@ -553,16 +533,6 @@ io.sockets.on('connection', function (client) {
 		
 	}
 
-	CheckAttractUsed = function(id){
-		if(usedAttract){
-			if(players[id].uid != userAttractedUid){
-				id = ((id) == 0) ? 1 : 0;
-			}
-			usedAttract = false;
-		}
-		return id;
-	}
-
 	getRandomPlayer = function(){
 		if(players.length == 0){
 			return;
@@ -570,9 +540,15 @@ io.sockets.on('connection', function (client) {
 		else if(players.length == 1){
 			return players[0].uid;
 		}
+
+		if(usedAttract){
+			usedAttract = false;	
+			return userAttractedUid;
+		}
+
 		var playerNumber = getRandomInt(3,1);
-		var id = CheckAttractUsed(playerNumber-1);
-		//console.log("enemyNumber is : " + enemyNumber);
+		var id = playerNumber-1;
+		
 		
 		return players[id].uid;
 
