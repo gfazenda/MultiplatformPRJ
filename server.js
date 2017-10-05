@@ -457,7 +457,7 @@ io.sockets.on('connection', function (client) {
 	});
 
 	CheckMonsterAttack = function(){
-		if(turnCount>=2){
+		if(turnCount>=players.length){
 			if(enemyBurned){
 				damageMonster(10);
 			}

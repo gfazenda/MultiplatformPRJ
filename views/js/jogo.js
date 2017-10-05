@@ -181,6 +181,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 			}
 			
 			if($scope.player1HP <= 0){
+				$scope.player1HP = 0;
 				socket.emit('dead', firebase.auth().currentUser.uid);
 				$scope.dead = true;
 			}
