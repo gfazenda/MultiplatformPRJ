@@ -8,7 +8,11 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	$scope.classMage = false;
 	$scope.actionText;
 	$scope.showActionText = false;
+	$scope.showActionTextMonster = false;
 	$scope.cureActive = false;
+	$scope.promise;
+	$scope.Math = window.Math;
+	$scope.dead = false;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -126,20 +130,37 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 													nAtaque: numberAttack
 												});
 		//});
+		
 		$scope.enemyTurn = true;
+		if(numberAttack==3 && $scope.myCharacter.class == "warrior"){
+			socket.emit('dead', firebase.auth().currentUser.uid);
+			$scope.waitingTurns = 2;
+		}
 	}
+	
+	socket.on('gameOver', function(){
+		window.location.href = '/inicio';
+	});
 
-	socket.on('actionText', function(text){
-
-		//$scope.$apply (function(){
+	socket.on('actionText', function(text, player = true){
+		$timeout.cancel($scope.promise);
+		$scope.$apply (function(){
 		$scope.actionText = text;
-		$scope.showActionText = true;
+		var delay = 2000;
+		if(player){
+			$scope.showActionText = true;
+		}else{
+			$scope.showActionTextMonster = true;
+			delay = 1500;
+		}
+		$scope.promise =
 		$timeout(function(){
 			$scope.showActionText = false;	
+			$scope.showActionTextMonster = false;
 			console.log("showActionText: " + $scope.showActionText);		
-		}, 2000);
+		}, delay);
 		console.log("showActionText: " + $scope.showActionText);
-	//});
+	});
 		//$scope.showActionText = false;
 	});
 
@@ -157,11 +178,18 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 			console.log("mychar USER ID IS ;;;;;;;;;;;  " + firebase.auth().currentUser.uid);
 			if(playerUID == firebase.auth().currentUser.uid){
 				console.log("PLAYER DAMAGED: " + $scope.myCharacter.class);								
-				$scope.player1HP -= damage;				
+				$scope.player1HP -= damage;
+				$scope.player1HP = $scope.Math.round($scope.player1HP);				
 			}
 			else {
 				console.log("PLAYER DAMAGED: " + $scope.partnerCharacter.class);				
 				$scope.player2HP -= damage;				
+				$scope.player2HP = $scope.Math.round($scope.player2HP);				
+			}
+			
+			if($scope.player1HP <= 0){
+				socket.emit('dead', firebase.auth().currentUser.uid);
+				$scope.dead = true;
 			}
 		});
 	});
@@ -195,7 +223,14 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	});
 
 	socket.on('playersTurn', function () {
+		if($scope.dead)
+			return;
 		$scope.$apply (function(){
+			if($scope.waitingTurns > 0){
+				$scope.waitingTurns--;
+				socket.emit('passTurn');
+				return;
+			}
 			$scope.enemyTurn = false;
 		});
 	});

@@ -140,13 +140,14 @@ app.post('/', function(request, response){
 
 
 var players = [];
-
+var personagens = [];
 var jogadores = [];
 var jogadoresRef = [];
 var poder;
 var currentMonster;
 var turnCount = 0; //se = 2, monstro ataca
-
+var usedAttract = false;
+var userAttractedUid;
 var enemyBurned = false;
 
 healPlayer = function(mage, className){
@@ -157,12 +158,16 @@ healPlayer = function(mage, className){
 	for (i = 0; i < playerInjured.length; i++) {
 		if(playerInjured[i].character.class == className){
 			playerNumber = i;
-			if((playerInjured[i].character.hp + hpHealed) <= playerInjured[i].character.hpMax){ 
-				playerInjured[i].character.hp += hpHealed;
-			}
-			else {
+			playerInjured[i].character.hp += hpHealed;
+			if(playerInjured[i].character.hp > playerInjured[i].character.hpMax){
 				playerInjured[i].character.hp = playerInjured[i].character.hpMax;
 			}
+			// if((playerInjured[i].character.hp + hpHealed) <= playerInjured[i].character.hpMax){ 
+			// 	playerInjured[i].character.hp += hpHealed;
+			// }
+			// else {
+			// 	playerInjured[i].character.hp = playerInjured[i].character.hpMax;
+			// }
 		}
 	} 	
 	
@@ -257,6 +262,7 @@ attackWarrior = function(warrior, numberAttack){
 			case 2:
 
 				io.sockets.emit('actionText', 'Attract');
+				usedAttract = true;
 				break;
 			
 			case 3:
@@ -307,17 +313,17 @@ io.sockets.on('connection', function (client) {
  
 	//personagemEscolha-----------------------------------------\/
 	client.on('tragaPersonagensModelos', function () {
-		var personagemRef = dataBase.ref('/players');
+		var personagemRef = dataBase.ref('/modeloPersonagem');
 
 		personagemRef.on('value', function(snapshot){
 			snapshot.forEach(function(id) {
-				presonagens[presonagens.length] = id.val();
+				personagens[personagens.length] = id.val();
 			});
 		})
 		
 		/*mod = personagensModelos;*/
-		client.emit('levaPersonagensModelos', presonagens);
-		client.broadcast.emit('levaPersonagensModelos', presonagens);
+		client.emit('levaPersonagensModelos', personagens);
+		client.broadcast.emit('levaPersonagensModelos', personagens);
 	});
 	
     //----------------------------------------------------------/\
@@ -485,70 +491,91 @@ io.sockets.on('connection', function (client) {
 			attackMage(attacker, info.nAtaque);
 		}else{
 			attackWarrior(attacker, info.nAtaque);
+			if(info.nAtaque == 2){
+				userAttractedUid = info.uid;
+			}
 		}
-		io.sockets.emit('enemyDamaged',currentMonster.hp);
-		turnCount++;
+		setTimeout(function(){
+
+			io.sockets.emit('enemyDamaged',currentMonster.hp);
+			turnCount++;
+			CheckMonsterAttack();
+			console.log('monster hp is ' + currentMonster.hp);
+		}, 2000);
+	});
+
+	CheckMonsterAttack = function(){
 		if(turnCount>=2){
 			if(enemyBurned){
 				damageMonster(10);
 			}
-			io.sockets.emit('playerDamaged', getRandomPlayer(), doEnemyAttack());
-			turnCount = 0;
-			io.sockets.emit('playersTurn');
+			var damage = doEnemyAttack();
+			setTimeout(function(){
+
+				io.sockets.emit('playerDamaged', getRandomPlayer(), damage);
+				turnCount = 0;
+				io.sockets.emit('playersTurn');
+			}, 2000);
 		}
-		console.log('monster hp is ' + currentMonster.hp);
+	}
+
+	client.on('passTurn', function () { 
+		turnCount++;
+		CheckMonsterAttack();
 	});
-
-
-
-	// client.on('attack', function (charObject) { 
-	// 	//client.emit('enviaOsPlayers', jogadoresRef);
-	// 	console.log("charObject characterClass: " + charObject.character.class );
-	// 	console.log("charObject numberattack: " + charObject.nAtaque );
-
-	// 	//console.log("CLASSE: " + character.class);
-	// 	if(charObject.character.class == "mage"){
-	// 		//damage = 
-	// 		attackMage(charObject.character, charObject.nAtaque);
-	// 	}else{
-	// 		attackWarrior(charObject.character, charObject.nAtaque);
-	// 	}
-	// 	io.sockets.emit('enemyDamaged',currentMonster.hp);
-	// 	turnCount++;
-	// 	if(turnCount>=2){
-	// 		doEnemyAttack();
-	// 		turnCount = 0;
-	// 		io.sockets.emit('playersTurn');
-	// 	}
-	// 	console.log('monster hp is ' + currentMonster.hp);
-	// });
+	
+	client.on('dead', function (uid) { 
+		console.log(players.length);
+		for(var i=0;i<players.length;i++){
+			if(players[i].uid == uid){
+				players.splice(i,1);
+			}
+		}
+		console.log(players.length);
+		if(players.length == 0){
+			console.log('game over');
+			io.sockets.emit('gameOver');
+		}
+		
+	});
 
 	doEnemyAttack = function(){
 		console.log('destroying players!!!!!!!');
 
 		var damage = currentMonster.power;
+		//setTimeout(function(){
+			io.sockets.emit('actionText', 'Attack', false);
 
-		return damage;
+		//}, 1000);
+					return damage;
+
+
 		
 	}
 
+	CheckAttractUsed = function(id){
+		if(usedAttract){
+			if(players[id].uid != userAttractedUid){
+				id = ((id) == 0) ? 1 : 0;
+			}
+			usedAttract = false;
+		}
+		return id;
+	}
+
 	getRandomPlayer = function(){
+		if(players.length == 0){
+			return;
+		}
+		else if(players.length == 1){
+			return players[0].uid;
+		}
 		var playerNumber = getRandomInt(3,1);
+		var id = CheckAttractUsed(playerNumber-1);
 		//console.log("enemyNumber is : " + enemyNumber);
-		switch(playerNumber)   {
-			case 1:
-				//pega player 1
-				console.log("player[0].uid: " + players[0].uid);
-				return players[0].uid;
-				break;
-			case 2:
-				//pega player 2
-				console.log("player[1].uid: " + players[1].uid);				
-				return players[1].uid;
-				break;
-			default:
-				break;
-		}  
+		
+		return players[id].uid;
+
 	}
 	
 	//-------------------------------------------------------------

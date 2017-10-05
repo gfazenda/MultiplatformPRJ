@@ -31,14 +31,15 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 					var personagemRef = dataBase.ref('/personagem');
 
 					personagemRef.push({
-						class: $scope.persoagem[escolhaClass-1].class,
-						level:$scope.persoagem[escolhaClass-1].level,
-						power: $scope.persoagem[escolhaClass-1].power,
-						hp: $scope.persoagem[escolhaClass-1].hp,
-						mp: $scope.persoagem[escolhaClass-1].mp,
+						class: $scope.personagem[escolhaClass-1].class,
+						level:$scope.personagem[escolhaClass-1].level,
+						power: $scope.personagem[escolhaClass-1].power,
+						hp: $scope.personagem[escolhaClass-1].hp,
+						hpMax: $scope.personagem[escolhaClass-1].hpMax,
+						mp: $scope.personagem[escolhaClass-1].mp,
 						name: charName,
-						sprite: $scope.persoagem[escolhaClass-1].sprite,
-						xp: $scope.persoagem[escolhaClass-1].xp,
+						sprite: $scope.personagem[escolhaClass-1].sprite,
+						xp: $scope.personagem[escolhaClass-1].xp,
 						userId: firebase.auth().currentUser.uid
 
 					})
@@ -78,7 +79,7 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 				console.log(personagemEscolha[0]);
 				console.log(personagemEscolha[1]);
 
-				$scope.persoagem = personagemEscolha;
+				$scope.personagem = personagemEscolha;
 				//char 1------------------------------------------
 				document.getElementById('spriteChar1').setAttribute('src', personagemEscolha[0].sprite);
 				document.getElementById('classChar1').innerHTML = personagemEscolha[0].class;
@@ -116,13 +117,14 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 /*function criaP1(){
 	console.log("pass");
 	var dataBase = firebase.database();
-	var personagemRef = dataBase.ref('/players');
+	var personagemRef = dataBase.ref('/modeloPersonagem');
 
 	personagemRef.push({
 		class: "warrior",
 		level:0,
 		power: 10,
 		hp: 20,
+		hpMax:20,
 		mp: 10,
 		name: "player1",
 		sprite: "https://img00.deviantart.net/3afa/i/2011/007/b/f/final_fantasy___fighter_hd_by_wahaadnan-d36kddl.png",
@@ -143,13 +145,14 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 function criaP2(){
 	console.log("pass");
 	var dataBase = firebase.database();
-	var personagemRef = dataBase.ref('/players');
+	var personagemRef = dataBase.ref('/modeloPersonagem');
 
 	personagemRef.push({
 		class: "mage",
 		level:0,
 		power: 10,
 		hp: 10,
+		hpMax:20,
 		mp: 20,
 		name: "player2",
 		sprite: "https://vignette1.wikia.nocookie.net/finalfantasy/images/8/85/Blackmage-ff1-nes.png/revision/20090719203756",
