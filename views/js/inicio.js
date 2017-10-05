@@ -146,9 +146,11 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 				
 						if($scope.personagemJgador){ //jogador  tem um personagem
 							//console.log("jogador com personagem ");
+							document.getElementById('classChar').innerHTML = $scope.personagemJgador.class;
 							document.getElementById('nomeChar').innerHTML = $scope.personagemJgador.name;
 							document.getElementById('levelChar').innerHTML = "Level: " + $scope.personagemJgador.level;
 							document.getElementById('poderChar').innerHTML = "Power: " + $scope.personagemJgador.power;
+							document.getElementById('pictChar').setAttribute('src', $scope.personagemJgador.sprite);
 
 							var nomeJogador;
 							nomeJogador = document.getElementById('google-displayName').innerHTML;
