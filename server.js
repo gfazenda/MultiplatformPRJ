@@ -503,6 +503,7 @@ io.sockets.on('connection', function (client) {
 					
 					if(usedAttract){
 						io.sockets.emit('playerDamaged', userAttractedUid, (damage*2));
+						usedAttract = false;
 					}else{
 						for(var i=0;i<players.length;i++){
 							io.sockets.emit('playerDamaged', players[i].uid, damage);
