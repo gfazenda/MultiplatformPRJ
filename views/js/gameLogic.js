@@ -14,12 +14,17 @@ var lifeCounter;
 var invencible;
 var fireButton;
 var emitter;
+
 // var magic = JSON.load('partyMagic.json');
 // var magic = JSON.add("partyMagic.json");
 
 function preload() {
 
-    game.load.image('sky', '/assets/sky.png');
+    // var urlImg = {{player1URL}};
+    // game.load.image('image-url',  urlImg);
+
+    var dataURI =
+    game.load.image('sky', '/assets/background.jpg');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
@@ -43,6 +48,8 @@ function create() {
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'sky');
+
+    // game.add.sprite(0, 0, 'image-url');
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();

@@ -10,7 +10,7 @@
 		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
         <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
-        <script src="gameLogic.js"></script>
+        <script src="js/gameLogic.js"></script>
 
 		<style>
 
@@ -88,6 +88,12 @@
                     width: 70%;
                 }
             }
+
+            phaserG{
+
+            margin:auto; 
+            display:block;
+            }
         </style>
 	</head>
 	
@@ -109,18 +115,27 @@
 
 		<!-- </div> -->
 
+            
+            
 		    <div class="row">
                 <nav class="light-blue lighten-1" role="navigation">
                     <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Game Logo</a></div>
                 </nav>
             </div> 
 
+            <div class="container">
             <div class="row">
-                <div class="col l1 offset-l2 " >
-                                    <div class="phaserG"></div>
-
+                <div class="col s1 l1 offset-l2">
+                    <div id="phaserG" class="responsive-img">
+                    </div>
                 </div>
-            </div>  
+            </div>
+            </div>
+
+            <!--<div class="row">-->
+                <!--<div class="col l1 offset-l2 " >-->
+                
+            <!--</div>-->  
 
             <div class="row">
 
@@ -223,11 +238,6 @@
 
                 </div>
             </div>
-
-        <!--<div class="phaserG">
-
-        <div>-->
-    
     
             <!-- test navbar-->
             <ul id="slide-out" class="side-nav #ba68c8 purple lighten-2">
