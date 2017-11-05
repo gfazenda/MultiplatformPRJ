@@ -9,6 +9,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
 		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
+        <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+        <script src="gameLogic.js"></script>
 
 		<style>
 
@@ -90,6 +92,7 @@
 	</head>
 	
 	<body class="teal lighten-2"> 
+
 		<div id="jogo" ng-app="myJogo" ng-controller="jogo" ng-init="Initialize()">
 			
 			<!-- <section> -->
@@ -106,10 +109,17 @@
 
 		<!-- </div> -->
 
-		<div class="row">
+		    <div class="row">
                 <nav class="light-blue lighten-1" role="navigation">
                     <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Game Logo</a></div>
                 </nav>
+            </div> 
+
+            <div class="row">
+                <div class="col l1 offset-l2 " >
+                                    <div class="phaserG"></div>
+
+                </div>
             </div>  
 
             <div class="row">
@@ -120,10 +130,13 @@
                     </a>
                 </div>
 
+                
+
                 <div class="container">
+
                     <div id="imgBTN" class="col l12 s12">
 
-                        <img class = "responsive-img" src="images/background.jpg"  ></img> 
+                        <img class = "responsive-img" src="images/background.jpg"  ></img>
 
                         <!--INFO CARD-->
                         <div id="infoCardAbove" class="card teal ">
@@ -207,12 +220,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                        
-                
-                
+                </div>
             </div>
+
+        <!--<div class="phaserG">
+
+        <div>-->
     
     
             <!-- test navbar-->
