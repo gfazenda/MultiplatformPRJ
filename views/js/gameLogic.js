@@ -23,13 +23,13 @@ function preload() {
     // var urlImg = {{player1URL}};
     // game.load.image('image-url',  urlImg);
 
-    var dataURI =
+    // var dataURI = {{player1URL}};
     game.load.image('sky', '/assets/background.jpg');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('enemy', 'assets/baddie.png', 32, 32);
-    // game.load.json('magic', 'partyMagic.json');
+    // game.load.json('magic', 'partyMagic.json'); //PARTICLE EDITOR
     game.load.image('magicA', 'assets/magicSprite.png');
     game.load.image('life', 'assets/characterLife.png');
     
@@ -156,10 +156,7 @@ function create() {
     emitter.gravity = 0;
 
     emitter.start(false, 500, 100);    
-    // emitter.emitX = 0;
     emitter.on = false;
-    // player.addChild(emitter);
-    // game.add.tween(emitter).to( { emitX: 800 }, 2000, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
 
    invencible = false;
 
