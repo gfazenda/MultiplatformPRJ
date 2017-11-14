@@ -1,3 +1,4 @@
+//PHASER
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaserG', { preload: preload, create: create, update: update });
 var platforms;
 var player;
@@ -14,6 +15,23 @@ var lifeCounter;
 var invencible;
 var fireButton;
 var emitter;
+var socket = io('http://localhost:8080');
+// var socket = io.connect();
+
+
+var spritePlayer;
+
+
+socket.emit("PhasertoServer");
+socket.on('64toPhaser', function (sprite64) {
+
+	    spritePlayer = sprite64;
+        console.log("SPRITE64: " + spritePlayer);
+});
+
+        console.log("SPRITE64: " + spritePlayer);
+
+
 
 // var magic = JSON.load('partyMagic.json');
 // var magic = JSON.add("partyMagic.json");
@@ -23,10 +41,21 @@ function preload() {
     // var urlImg = {{player1URL}};
     // game.load.image('image-url',  urlImg);
 
+
+    // file.data.src = file.url;
+    // file.data.crossOrigin = this.crossOrigin;
+    // file.data.src = this.baseURL + file.url;
+
+    
+    // while(spritePlayer == null){
+    // }
+            game.load.image('player1', spritePlayer);
+
     // var dataURI = {{player1URL}};
     game.load.image('sky', '/assets/background.jpg');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
+    
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('enemy', 'assets/baddie.png', 32, 32);
     // game.load.json('magic', 'partyMagic.json'); //PARTICLE EDITOR
@@ -48,6 +77,9 @@ function create() {
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'sky');
+
+    //ADD SPRITE 64
+    game.add.sprite(400, 300, 'player1');
 
     // game.add.sprite(0, 0, 'image-url');
 
@@ -167,7 +199,6 @@ function create() {
 }
 
 function update() {
-
     // dude.flow();
 
     // console.log("WIDHT: " + game.scale.width);
@@ -326,3 +357,6 @@ function invencibilityOff(){
     tween.stop();
     player.alpha = 1;
 }
+
+
+

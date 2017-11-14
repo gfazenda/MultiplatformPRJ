@@ -429,6 +429,13 @@ io.sockets.on('connection', function (client) {
 		getNewEnemy();
 	});
 	//-----------------------------------------------------------/\
+	client.on('send64', function (sprite64) {
+	//  console.log("SPRITE64: " + sprite64);
+
+		io.sockets.emit('64toPhaser', sprite64);
+		
+	});
+	//-----------------------------------------------------------/\
 	
 	client.on('getCharacter', function (uid) { 
 		var personagemRef = dataBase.ref('/personagem');
@@ -518,6 +525,10 @@ io.sockets.on('connection', function (client) {
 			}, 2000);
 		}
 	}
+
+	client.on('PhasertoServer', function(){
+		console.log("PhasertoServer WORKS!");
+	});
 
 	client.on('passTurn', function () { 
 		turnCount++;

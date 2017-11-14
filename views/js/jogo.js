@@ -13,6 +13,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	$scope.promise;
 	$scope.Math = window.Math;
 	$scope.dead = false;
+    $scope.player1_S64;
 	var socket = io('http://localhost:8080');
 	var config = {
 		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
@@ -68,6 +69,8 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		$scope.myCharacter = char;
 		$scope.player1URL = char.sprite;
 		$scope.player1HP = char.hp;
+        $scope.player1_S64 = char.sprite64;
+        socket.emit('send64', $scope.player1_S64);
 		//$scope.player1Power = char.power;
 		if(char.class == "mage"){
 			$scope.classMage = true;
