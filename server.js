@@ -436,6 +436,12 @@ io.sockets.on('connection', function (client) {
 		
 	});
 	//-----------------------------------------------------------/\
+	client.on('SPACEBAR', function () {
+		 console.log("SPACEBAR PRESSED, SERVER KNOWS!");
+	
+			
+		});
+	//-----------------------------------------------------------/\
 	
 	client.on('getCharacter', function (uid) { 
 		var personagemRef = dataBase.ref('/personagem');

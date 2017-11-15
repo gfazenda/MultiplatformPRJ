@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaserG', { preload: preload,
 var platforms;
 var player;
 var cursors;
-var stars;
+// var stars;
 var score = 0;
 var scoreText;
 var enemies;
@@ -15,29 +15,33 @@ var lifeCounter;
 var invencible;
 var fireButton;
 var emitter;
-var socket = io('http://localhost:8080');
+var socket;
+// var socket = io.connect();
+// socket.connect();
 // var socket = io.connect();
 
 
-var spritePlayer;
 
 
-socket.emit("PhasertoServer");
-socket.on('64toPhaser', function (sprite64) {
-
-	    spritePlayer = sprite64;
-        console.log("SPRITE64: " + spritePlayer);
-});
-
-        console.log("SPRITE64: " + spritePlayer);
-
+        // console.log("SPRITE64: " + spritePlayer);
+        
 
 
 // var magic = JSON.load('partyMagic.json');
 // var magic = JSON.add("partyMagic.json");
 
 function preload() {
-
+    socket = io('http://localhost:8080');
+    
+    socket.emit("PhasertoServer");
+    socket.on('64toPhaser', function (sprite64) {
+        
+        game.load.image('player1', sprite64);
+        
+        
+        console.log("SPRITE64: " + sprite64);
+        console.log("RECEBENDO DO SERVIDOR");        
+    });
     // var urlImg = {{player1URL}};
     // game.load.image('image-url',  urlImg);
 
@@ -48,9 +52,9 @@ function preload() {
 
     
     // while(spritePlayer == null){
+    
+    //     game.load.image('player1', spritePlayer);
     // }
-            game.load.image('player1', spritePlayer);
-
     // var dataURI = {{player1URL}};
     game.load.image('sky', '/assets/background.jpg');
     game.load.image('ground', 'assets/platform.png');
@@ -79,8 +83,20 @@ function create() {
     game.add.sprite(0, 0, 'sky');
 
     //ADD SPRITE 64
-    game.add.sprite(400, 300, 'player1');
-
+    // socket.on('podeCriarImagem64', function () {
+        
+    //     game.add.sprite(400, 300, 'player1');
+                
+    //     console.log("IMAGEM CRIADA");
+        
+                
+    // });
+    
+    var mage = game.add.sprite(400, 300, 'player1');
+    mage.scale.x = 0.2;
+    mage.scale.y = 0.2;
+    
+    
     // game.add.sprite(0, 0, 'image-url');
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
@@ -125,18 +141,18 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    stars = game.add.group();
+    // stars = game.add.group();
 
-    stars.enableBody = true;
+    // stars.enableBody = true;
 
-    for(var i=0; i<12; i++)
-    {
-        var star = stars.create(i * 70, 0, 'star');
+    // for(var i=0; i<12; i++)
+    // {
+    //     var star = stars.create(i * 70, 0, 'star');
 
-        star.body.gravity.y = 50;
+    //     star.body.gravity.y = 50;
 
-        star.body.bounce.y = 0.7 + Math.random() * 0.2;
-    }
+    //     star.body.bounce.y = 0.7 + Math.random() * 0.2;
+    // }
 
      //life
      lifeCounter = game.add.group();
@@ -200,6 +216,8 @@ function create() {
 
 function update() {
     // dude.flow();
+    
+    
 
     // console.log("WIDHT: " + game.scale.width);
     // console.log("HEIGHT: " + game.scale.height);
@@ -207,11 +225,11 @@ function update() {
     //  Collide the player and the stars with the platforms
     var hitPlatform = game.physics.arcade.collide(player, platforms);
 
-    game.physics.arcade.collide(stars, platforms);
+    // game.physics.arcade.collide(stars, platforms);
 
     game.physics.arcade.collide(enemies, platforms);
 
-    game.physics.arcade.overlap(player, stars, collectStar, null, this);
+    // game.physics.arcade.overlap(player, stars, collectStar, null, this);
 
     game.physics.arcade.overlap(player, enemies, playerDeath, null, this);
     
@@ -224,6 +242,7 @@ function update() {
 
     if(fireButton.isDown){
         console.log("SPACEBAR PRESSED!");
+        socket.emit("SPACEBAR");
     }
     if(cursors.left.isDown)
     {
@@ -266,25 +285,25 @@ function placeLifeCounter(){
     }
 }
 
-function collectStar(player, star){
+// function collectStar(player, star){
 
-    // Removes the star from the screen
-    emitter.on = true;
+//     // Removes the star from the screen
+//     emitter.on = true;
     
-    // emitter.x = player.x;
-    // emitter.y = player.y;
+//     // emitter.x = player.x;
+//     // emitter.y = player.y;
 
-    emitter.emitX = player.position.x;
-    emitter.emitY = player.position.y;
+//     emitter.emitX = player.position.x;
+//     emitter.emitY = player.position.y;
 
     
-    star.kill();
-    // Add and update the score
-    score += 10;
-    scoreText.text = 'Score: ' + score;
+//     star.kill();
+//     // Add and update the score
+//     score += 10;
+//     scoreText.text = 'Score: ' + score;
 
-    game.time.events.add(Phaser.Timer.SECOND * 2, killEmitter, this).autoDestroy = true;
-}
+//     game.time.events.add(Phaser.Timer.SECOND * 2, killEmitter, this).autoDestroy = true;
+// }
 
 function killEmitter(){
 
@@ -314,13 +333,13 @@ function enemyBehaviour(){
             {
                 enemy.body.velocity.x = -50;
                 enemy.animations.play('left');
-                console.log("LEFT");
+                // console.log("LEFT");
             }
             else if(direction == "right")
             {
                 enemy.body.velocity.x = +50;
                 enemy.animations.play('right');
-                console.log("RIGHT");
+                // console.log("RIGHT");
             }
 
         }
