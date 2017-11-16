@@ -16,11 +16,54 @@ var invencible;
 var fireButton;
 var emitter;
 var socket;
+
+var dataBase;
+var players = [];
+
+
 // var socket = io.connect();
 // socket.connect();
 // var socket = io.connect();
 
+var loaded = false;
+var config = {
+		apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
+		authDomain: "teste-firebase-23985.firebaseapp.com",
+		databaseURL: "https://teste-firebase-23985.firebaseio.com",
+		projectId: "teste-firebase-23985",
+		storageBucket: "teste-firebase-23985.appspot.com",
+		messagingSenderId: "493837150254"
+    };
+firebase.initializeApp(config);
 
+
+function criaP1(){
+	console.log("pass");
+	var dataBase = firebase.database();
+	var personagemRef = dataBase.ref('/modeloPersonagem');
+
+	personagemRef.push({
+		class: "warrior",
+		level:0,
+		power: 10,
+		hp: 20,
+		hpMax:20,
+		mp: 10,
+		name: "vaitomarnocopo",
+		sprite: "https://img00.deviantart.net/3afa/i/2011/007/b/f/final_fantasy___fighter_hd_by_wahaadnan-d36kddl.png",
+		xp: 0,
+		userId: 123456789
+		// nome: charName,
+
+	})
+	.then(function(){
+
+	})
+	.catch(function(error){
+		console.log(error);	
+	})
+
+}
 
 
         // console.log("SPRITE64: " + spritePlayer);
@@ -30,32 +73,120 @@ var socket;
 // var magic = JSON.load('partyMagic.json');
 // var magic = JSON.add("partyMagic.json");
 
+// function loadThings(onDone){
+//     socket.on('64toPhaser', function (sprite64) {
+            
+//             game.load.image('player1', sprite64);
+            
+//             console.log("LOADED: " + loaded);
+//             console.log("SPRITE64: " + sprite64);
+//             console.log("RECEBENDO DO SERVIDOR");  
+//             onDone = true;
+// });
+// }
+
+function getCharacter(uid){
+		console.log('blabla ' + players.length)
+		console.log(uid)
+		for(var i=0;i<players.length;i++){
+			if(players[i].uid == uid){
+				return players[i].character;
+			}
+		}
+		return null;
+}
+
+
+function playerInfo(uid,obj){
+	this.uid = uid;
+	this.character = obj;
+
+}
+
+function getThings(uid) { 
+		var personagemRef = dataBase.ref('/personagem');
+		personagemRef.once('value', function(snapshot){
+			snapshot.forEach(function(obj) {
+				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
+					console.log('sending char found')
+					var existingCharacter = getCharacter(uid);
+					if(existingCharacter == null){
+					var newPlayer = new playerInfo(uid,obj.val());
+					players.push(newPlayer);
+					console.log('size ' + players.length);
+                        if(players[0].character.class == "mage"){
+                            game.load.image('player1', '/assets/blackMage.png');
+                            game.load.image('player2', '/assets/warrior.png');
+                            loaded = true;
+                            console.log('dsaddasd');
+                        } else{
+                            game.load.image('player1', '/assets/warrior.png');
+                            game.load.image('player2', '/assets/blackMage.png');
+                            console.log('11111111');
+                        }
+
+						// getNewEnemy();
+                        LoadSprites();
+				    }
+				}
+			});
+		})
+		// if(players.length == 2){
+		// 	console.log('send monster')
+		// 	getNewEnemy();
+		// }
+}
+    console.log("USER: " + firebase.auth().currentUser.uid);
+
+ function checkIfLoggedIn(){
+console.log('starting maaan2232321222');
+		firebase.auth().onAuthStateChanged(function(user){
+			if(user){//logado
+                console.log(firebase.auth().currentUser.uid);
+				console.log("página jogo: user logged in222");
+                dataBase = firebase.database();
+               // getThings(firebase.auth().currentUser.uid);
+			}else{//nao logado
+
+				console.log("página jogo: não logado");
+			}
+			
+		})
+
+	}
+
+	 function Initialize() {
+		console.log('starting maaan222');
+		checkIfLoggedIn();
+	    players = [];
+	}
+      
 function preload() {
-    socket = io('http://localhost:8080');
     
-    socket.emit("PhasertoServer");
-    socket.on('64toPhaser', function (sprite64) {
-        
-        game.load.image('player1', sprite64);
-        
-        
-        console.log("SPRITE64: " + sprite64);
-        console.log("RECEBENDO DO SERVIDOR");        
-    });
+    // game.time.events.add(Phaser.Timer.SECOND * 4, fadePicture, this);
+    // socket = io('http://localhost:8080');
+    
+    // socket.emit("PhasertoServer");
     // var urlImg = {{player1URL}};
     // game.load.image('image-url',  urlImg);
+   // criaP1();
+   //Initialize();
 
 
     // file.data.src = file.url;
     // file.data.crossOrigin = this.crossOrigin;
     // file.data.src = this.baseURL + file.url;
-
+    
     
     // while(spritePlayer == null){
     
     //     game.load.image('player1', spritePlayer);
     // }
     // var dataURI = {{player1URL}};
+    // game.load.image('player1', '/assets/blackMage.png');
+    // game.load.image('player2', '/assets/blackMage.png');
+    Initialize();
+
     game.load.image('sky', '/assets/background.jpg');
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
@@ -66,13 +197,25 @@ function preload() {
     game.load.image('magicA', 'assets/magicSprite.png');
     game.load.image('life', 'assets/characterLife.png');
     
-    
+    //game.load.image('player1', '/assets/blackMage.png');
+   // game.load.image('player2', '/assets/warrior.png');
     // game.load.particleEffect('party', 'partyMagic.json');
     // game.load.particleEffect('partyMagic.json');
 }
+var player1;
+var player2;
+function LoadSprites(){
+    player1 = game.add.sprite(400, 300, 'player1');
+    player1.scale.x = 0.2;
+    player1.scale.y = 0.2;
+
+    player2 = game.add.sprite(600, 300, 'player2');
+    player2.scale.x = 0.2;
+    player2.scale.y = 0.2;
+}
 
 function create() {
-
+   
     
     // game.add.sprite(0, 0, 'star');
     
@@ -91,10 +234,8 @@ function create() {
         
                 
     // });
-    
-    var mage = game.add.sprite(400, 300, 'player1');
-    mage.scale.x = 0.2;
-    mage.scale.y = 0.2;
+   
+
     
     
     // game.add.sprite(0, 0, 'image-url');
@@ -216,8 +357,10 @@ function create() {
 
 function update() {
     // dude.flow();
-    
-    
+    if(!loaded){
+    getThings(firebase.auth().currentUser.uid);
+  
+    }
 
     // console.log("WIDHT: " + game.scale.width);
     // console.log("HEIGHT: " + game.scale.height);

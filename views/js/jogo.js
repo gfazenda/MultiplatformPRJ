@@ -71,6 +71,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		$scope.player1HP = char.hp;
         $scope.player1_S64 = char.sprite64;
         socket.emit('send64', $scope.player1_S64);
+		$scope.class = char.class;
 		//$scope.player1Power = char.power;
 		if(char.class == "mage"){
 			$scope.classMage = true;
