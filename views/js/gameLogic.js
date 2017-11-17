@@ -251,13 +251,13 @@ function LoadSpritesWarrior(p1p2){
 		player1.scale.setTo(0.1, 0.1);
 		
 		player2 = game.add.sprite(600, 300, 'mage');
-		player2.scale.setTo(0.2, 0.2);
+		player2.scale.setTo(0.25, 0.25);
 	}else{
 		player2 = game.add.sprite(400, 300, 'warrior');
-		player2.scale.setTo(0.07, 0.07);
+		player2.scale.setTo(0.1, 0.1);
 		
 		player1 = game.add.sprite(600, 300, 'mage');
-		player1.scale.setTo(0.2, 0.2);
+		player1.scale.setTo(0.25, 0.25);
 		
 	}
 }
@@ -265,7 +265,7 @@ function LoadSpritesWarrior(p1p2){
 function LoadSpritesMage(p1p2){
     if(p1p2 == 0){
 		player1 = game.add.sprite(400, 300, 'mage');
-		player1.scale.setTo(0.2, 0.2);
+		player1.scale.setTo(0.25, 0.25);
 
 		player2 = game.add.sprite(600, 300, 'warrior');
 		player2.scale.setTo(0.1, 0.1);
@@ -274,7 +274,7 @@ function LoadSpritesMage(p1p2){
 		player1.scale.setTo(0.1, 0.1);
 		
 		player2 = game.add.sprite(600, 300, 'mage');
-		player2.scale.setTo(0.2, 0.2);
+		player2.scale.setTo(0.25, 0.25);
 		
 	}
 }
