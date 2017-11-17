@@ -22,6 +22,10 @@ var players = [];
 
 var player1;
 var player2;
+
+
+var playerNum = 0;
+var PartidaNum = 0;
 // var socket = io.connect();
 // socket.connect();
 // var socket = io.connect();
@@ -36,6 +40,9 @@ var config = {
 		messagingSenderId: "493837150254"
     };
 firebase.initializeApp(config);
+
+
+
 
 
 /*function criaP1(){
@@ -86,6 +93,7 @@ firebase.initializeApp(config);
 // });
 // }
 
+
 function getCharacter(uid){
 		//console.log('blabla ' + players.length)
 		console.log(uid)
@@ -97,14 +105,35 @@ function getCharacter(uid){
 		return null;
 }
 
-
 function playerInfo(uid,obj){
 	this.uid = uid;
 	this.character = obj;
 
 }
 
+function criaPartida(np){//quando um usuario loga o numero aumenta para verificar se é o layer 1 ou 2
+
+	np = np + 1;
+	firebase.database().ref('/Partidas').set({
+		numPlayerPartida: np
+	});
+}
+
+function getPlayerNumUpdate() { 
+	var playerNumUpdateRef = dataBase.ref('/Partidas');
+	playerNumUpdateRef.once('value', function(snapshot){
+		snapshot.forEach(function(x) {
+			//console.log(x.A.B)//x.A.B acessar o nivel B ou 2° do firebase???
+			playerNum = x.A.B;
+			//console.log('playerNum: ' + playerNum);
+			criaPartida(playerNum);
+			
+		});
+	})
+}
+
 function getThings(uid) { 
+
 		var personagemRef = dataBase.ref('/personagem');
 		personagemRef.once('value', function(snapshot){
 			snapshot.forEach(function(obj) {
@@ -114,14 +143,21 @@ function getThings(uid) {
 					if(existingCharacter == null){
 					var newPlayer = new playerInfo(uid,obj.val());
 					players.push(newPlayer);
-					//console.log('size ' + players.length);
+						console.log('playerNum: ' + playerNum);
+
+						if(playerNum % 2 == 0){
+							console.log('1° playerNum');
+						}else{
+							console.log('2° playerNum');
+						}
+						
                         if(players[0].character.class == "mage"){
-							
-							LoadSpritesMage();
+	
+							LoadSpritesMage(playerNum % 2);
                             console.log("pMage: "+ players[0].character.class);
                         } else{
 
-							LoadSpritesWarrior();
+							LoadSpritesWarrior(playerNum % 2);
                             console.log("pWarrior: "+ players[0].character.class);
 							
                         }
@@ -163,7 +199,9 @@ function getThings(uid) {
 	}
       
 function preload() {
-    
+
+    //getPlayerNumUpdate();
+	
     // game.time.events.add(Phaser.Timer.SECOND * 4, fadePicture, this);
     // socket = io('http://localhost:8080');
     
@@ -198,8 +236,8 @@ function preload() {
     game.load.image('magicA', 'assets/magicSprite.png');
     game.load.image('life', 'assets/characterLife.png');
     
-    game.load.image('player1', 'assets/blackMage.png');
-    game.load.image('player2', 'assets/warrior.png');
+    game.load.image('mage', 'assets/blackMage.png');
+    game.load.image('warrior', 'assets/warrior.png');
 	
     // game.load.particleEffect('party', 'partyMagic.json');
     // game.load.particleEffect('partyMagic.json');
@@ -207,20 +245,38 @@ function preload() {
 }
 
 
-function LoadSpritesWarrior(){
-    player1 = game.add.sprite(400, 300, 'player1');
-    player1.scale.setTo(0.2, 0.2);
-
-    player2 = game.add.sprite(600, 300, 'player2');
-    player2.scale.setTo(0.2, 0.2);
+function LoadSpritesWarrior(p1p2){
+	if(p1p2 == 0){
+		player1 = game.add.sprite(400, 300, 'warrior');
+		player1.scale.setTo(0.2, 0.2);
+		
+		player2 = game.add.sprite(600, 300, 'mage');
+		player2.scale.setTo(0.2, 0.2);
+	}else{
+		player2 = game.add.sprite(400, 300, 'warrior');
+		player2.scale.setTo(0.2, 0.2);
+		
+		player1 = game.add.sprite(600, 300, 'mage');
+		player1.scale.setTo(0.2, 0.2);
+		
+	}
 }
 
-function LoadSpritesMage(){
-    player2 = game.add.sprite(400, 300, 'player1');
-    player2.scale.setTo(0.2, 0.2);
+function LoadSpritesMage(p1p2){
+    if(p1p2 == 0){
+		player1 = game.add.sprite(400, 300, 'mage');
+		player1.scale.setTo(0.2, 0.2);
 
-    player1 = game.add.sprite(600, 300, 'player2');
-    player1.scale.setTo(0.2, 0.2);
+		player2 = game.add.sprite(600, 300, 'warrior');
+		player2.scale.setTo(0.2, 0.2);
+	}else{
+		player1 = game.add.sprite(400, 300, 'warrior');
+		player1.scale.setTo(0.2, 0.2);
+		
+		player2 = game.add.sprite(600, 300, 'mage');
+		player2.scale.setTo(0.2, 0.2);
+		
+	}
 }
 
 function create() {
@@ -345,6 +401,9 @@ function create() {
 
    fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
    
+	getPlayerNumUpdate();
+	//criaPartida(2);
+	
    getThings(firebase.auth().currentUser.uid);
 
 }
