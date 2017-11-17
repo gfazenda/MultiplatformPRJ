@@ -20,7 +20,8 @@ var socket;
 var dataBase;
 var players = [];
 
-
+var player1;
+var player2;
 // var socket = io.connect();
 // socket.connect();
 // var socket = io.connect();
@@ -37,7 +38,7 @@ var config = {
 firebase.initializeApp(config);
 
 
-function criaP1(){
+/*function criaP1(){
 	console.log("pass");
 	var dataBase = firebase.database();
 	var personagemRef = dataBase.ref('/modeloPersonagem');
@@ -63,7 +64,7 @@ function criaP1(){
 		console.log(error);	
 	})
 
-}
+}*/
 
 
         // console.log("SPRITE64: " + spritePlayer);
@@ -86,7 +87,7 @@ function criaP1(){
 // }
 
 function getCharacter(uid){
-		console.log('blabla ' + players.length)
+		//console.log('blabla ' + players.length)
 		console.log(uid)
 		for(var i=0;i<players.length;i++){
 			if(players[i].uid == uid){
@@ -108,25 +109,25 @@ function getThings(uid) {
 		personagemRef.once('value', function(snapshot){
 			snapshot.forEach(function(obj) {
 				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
-					console.log('sending char found')
+					//console.log('sending char found')
 					var existingCharacter = getCharacter(uid);
 					if(existingCharacter == null){
 					var newPlayer = new playerInfo(uid,obj.val());
 					players.push(newPlayer);
-					console.log('size ' + players.length);
+					//console.log('size ' + players.length);
                         if(players[0].character.class == "mage"){
-                            game.load.image('player1', '/assets/blackMage.png');
-                            game.load.image('player2', '/assets/warrior.png');
-                            loaded = true;
-                            console.log('dsaddasd');
+							
+							LoadSpritesMage();
+                            console.log("pMage: "+ players[0].character.class);
                         } else{
-                            game.load.image('player1', '/assets/warrior.png');
-                            game.load.image('player2', '/assets/blackMage.png');
-                            console.log('11111111');
+
+							LoadSpritesWarrior();
+                            console.log("pWarrior: "+ players[0].character.class);
+							
                         }
 
 						// getNewEnemy();
-                        LoadSprites();
+                       
 				    }
 				}
 			});
@@ -136,14 +137,14 @@ function getThings(uid) {
 		// 	getNewEnemy();
 		// }
 }
-    console.log("USER: " + firebase.auth().currentUser.uid);
+    //console.log("USER: " + firebase.auth().currentUser.uid);
 
  function checkIfLoggedIn(){
-console.log('starting maaan2232321222');
+//console.log('starting maaan2232321222');
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
-                console.log(firebase.auth().currentUser.uid);
-				console.log("página jogo: user logged in222");
+                //console.log(firebase.auth().currentUser.uid);
+				//console.log("página jogo: user logged in222");
                 dataBase = firebase.database();
                // getThings(firebase.auth().currentUser.uid);
 			}else{//nao logado
@@ -197,21 +198,29 @@ function preload() {
     game.load.image('magicA', 'assets/magicSprite.png');
     game.load.image('life', 'assets/characterLife.png');
     
-    //game.load.image('player1', '/assets/blackMage.png');
-   // game.load.image('player2', '/assets/warrior.png');
+    game.load.image('player1', 'assets/blackMage.png');
+    game.load.image('player2', 'assets/warrior.png');
+	
     // game.load.particleEffect('party', 'partyMagic.json');
     // game.load.particleEffect('partyMagic.json');
+
 }
-var player1;
-var player2;
-function LoadSprites(){
+
+
+function LoadSpritesWarrior(){
     player1 = game.add.sprite(400, 300, 'player1');
-    player1.scale.x = 0.2;
-    player1.scale.y = 0.2;
+    player1.scale.setTo(0.2, 0.2);
 
     player2 = game.add.sprite(600, 300, 'player2');
-    player2.scale.x = 0.2;
-    player2.scale.y = 0.2;
+    player2.scale.setTo(0.2, 0.2);
+}
+
+function LoadSpritesMage(){
+    player2 = game.add.sprite(400, 300, 'player1');
+    player2.scale.setTo(0.2, 0.2);
+
+    player1 = game.add.sprite(600, 300, 'player2');
+    player1.scale.setTo(0.2, 0.2);
 }
 
 function create() {
@@ -224,21 +233,6 @@ function create() {
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'sky');
-
-    //ADD SPRITE 64
-    // socket.on('podeCriarImagem64', function () {
-        
-    //     game.add.sprite(400, 300, 'player1');
-                
-    //     console.log("IMAGEM CRIADA");
-        
-                
-    // });
-   
-
-    
-    
-    // game.add.sprite(0, 0, 'image-url');
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
@@ -350,18 +344,13 @@ function create() {
    invencible = false;
 
    fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    
-    
+   
+   getThings(firebase.auth().currentUser.uid);
 
 }
 
 function update() {
     // dude.flow();
-    if(!loaded){
-    getThings(firebase.auth().currentUser.uid);
-  
-    }
-
     // console.log("WIDHT: " + game.scale.width);
     // console.log("HEIGHT: " + game.scale.height);
     
@@ -391,7 +380,7 @@ function update() {
     {
         //  Move to the left
         player.body.velocity.x = -150;
-
+		player1.x--;
         player.animations.play('left');
 
     }
@@ -399,7 +388,8 @@ function update() {
     {
         //  Move to the right
         player.body.velocity.x = 150;
-
+		player1.x++;
+		
         player.animations.play('right');
     }
     else
