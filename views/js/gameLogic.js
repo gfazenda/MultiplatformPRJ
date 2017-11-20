@@ -119,6 +119,88 @@ function criaPartida(np){//quando um usuario loga o numero aumenta para verifica
 	});
 }
 
+
+//match
+function matchs(PUID){
+	var ID = 0;
+	var UidExist = 0;
+	var matchRef = dataBase.ref('/match');
+
+	matchRef.once('value', function(snapshot){
+		
+		if(!snapshot.val()){//se nada cadastrado, cadastra uma partida
+			console.log(snapshot.val());
+			firebase.database().ref('/match').push({
+				id: ID,
+				player1: PUID,
+				player2: PUID
+			});
+		}
+		
+	})
+		
+	matchRef.once('value', function(snapshot){
+		ID++;//conta quantoas partidas já cadastradas
+
+		if(PUID !== snapshot.val().player1 && PUID !== snapshot.val().player2){
+			console.log(PUID);
+			console.log(snapshot.val().player1);
+			console.log(snapshot.val().player2);
+			UidExist = 1;
+		}
+
+	})
+	
+	if(UidExist == 1){//new match
+		matchRef.once('value', function(snapshot){
+			if (snapshot.val().player1 !== snapshot.val().player2 && snapshot.val().id == ID-1){//se os 2 ids forem diferentes esta tudo certo com a partida 
+																						//e pega o ultimo cadastro do banco id-1 para ver se esta certo e 
+																						//cria uma nova partida
+				console.log("pass hera new match");
+				firebase.database().ref('/match').push({//cadastra new match
+					id: ID,
+					player1: PUID,
+					player2: PUID
+				});					
+			}
+		});
+	}	
+	
+	// if(UidExist == 1){//new match
+	
+		// matchRef.once('value', function(snapshot){
+			// //console.log("snapshot"+snapshot.val().length)
+				
+			// if(snapshot.val().player1 === snapshot.val().player2){//cadastro novo jogador //p2
+	
+				// var idPlayer1 = snapshot.val().player1;
+				// firebase.database().ref('/match').set({//cadastra 2° jogador
+					// id: ID,
+					// player1: idPlayer1,
+					// player2: PUID
+				// });
+			// } 
+				
+				
+		// });
+	// }
+	
+
+}
+
+function getPlayerNumUpdate() { 
+	var playerNumUpdateRef = dataBase.ref('/Partidas');
+	playerNumUpdateRef.once('value', function(snapshot){
+		snapshot.forEach(function(x) {
+			//console.log(x.A.B)//x.A.B acessar o nivel B ou 2° do firebase???
+			playerNum = x.A.B;
+			//console.log('playerNum: ' + playerNum);
+			criaPartida(playerNum);
+			
+		});
+	})
+}
+
 function getPlayerNumUpdate() { 
 	var playerNumUpdateRef = dataBase.ref('/Partidas');
 	playerNumUpdateRef.once('value', function(snapshot){
@@ -403,8 +485,9 @@ function create() {
    
 	getPlayerNumUpdate();
 	//criaPartida(2);
-	
-   getThings(firebase.auth().currentUser.uid);
+
+	getThings(firebase.auth().currentUser.uid);
+	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
 
 }
 

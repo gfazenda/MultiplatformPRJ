@@ -76,7 +76,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 		if(char.class == "mage"){
 			$scope.classMage = true;
 		}
-		console.log($scope.classMage);
+			console.log($scope.classMage);
 		})
 	});
 
