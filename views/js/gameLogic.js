@@ -135,68 +135,141 @@ function criaPartida(np){//quando um usuario loga o numero aumenta para verifica
 //match
 function matchs(PUID){
 	var ID = 0;
-	var UidExist = 0;
+	var UidExist = -2;
 	var matchRef = dataBase.ref('/match');
-
+	
 	matchRef.once('value', function(snapshot){
 		
 		if(!snapshot.val()){//se nada cadastrado, cadastra uma partida
+			console.log("nao tem partidas cadastradas");
 			console.log(snapshot.val());
 			firebase.database().ref('/match').push({
 				id: ID,
 				player1: PUID,
 				player2: PUID
 			});
-		}
-		
-	})
-		
-	matchRef.once('value', function(snapshot){
-		ID++;//conta quantoas partidas já cadastradas
 
-		if(PUID !== snapshot.val().player1 && PUID !== snapshot.val().player2){
-			console.log(PUID);
-			console.log(snapshot.val().player1);
-			console.log(snapshot.val().player2);
-			UidExist = 1;
+		}else{//ja esxite aguma partida com um player nela
+			console.log("Tem partidas cadastradas");
+			console.log(snapshot.val());
+			
+			ID++;//conta quantoas partidas já cadastradas
+			//console.log("ID ");
+			//console.log(ID);
+			var contKey = 0;
+			snapshot.forEach(function(x) {
+				console.log("p1 ");
+				console.log(x.val().player1);
+				console.log("p2 ");
+				console.log(x.val().player2);
+				
+				console.log("key"+contKey);
+				
+				if(x.val().player1 === x.val().player2){//cadastro novo jogador //p2
+					//console.log(PUID);
+					//console.log(snapshot.val().player1);
+					//console.log(snapshot.val().player2);
+					var idPlayer1 = x.val().player1;
+					
+					console.log(Object.keys(snapshot.val())[contKey]);
+					
+					firebase.database().ref('/match/'+Object.keys(snapshot.val())[contKey]).set(null);//remove o cadastro para cadastrar um atualizado com outra key				
+																//se só usar o "set" ele remove a key e se usar o update ele mantem 
+																//os dados e cadastra a mais, pois nao se tem a key
+					
+					var newKey = firebase.database().ref('/match').push().key;//cria uma nova key
+
+					firebase.database().ref('/match/' + Object.keys(snapshot.val())[contKey]).set({//cadastra 2° jogador
+						id: contKey+1,
+						player1: idPlayer1,
+						player2: PUID
+					});
+				
+					console.log("Iguais");
+
+				}
+				contKey++;
+			});
+
 		}
 
 	})
 	
-	if(UidExist == 1){//new match
-		matchRef.once('value', function(snapshot){
-			if (snapshot.val().player1 !== snapshot.val().player2 && snapshot.val().id == ID-1){//se os 2 ids forem diferentes esta tudo certo com a partida 
-																						//e pega o ultimo cadastro do banco id-1 para ver se esta certo e 
-																						//cria uma nova partida
-				console.log("pass hera new match");
-				firebase.database().ref('/match').push({//cadastra new match
-					id: ID,
-					player1: PUID,
-					player2: PUID
-				});					
-			}
+	
+
+}
+
+function newMatch(UID){
+	var ID;
+	var matchRef = dataBase.ref('/match');
+	
+		//espera até que retorne o ultimo ID-----------------------------------------------------------\/
+	var returnId = new Promise(function returnId(resolve, reject) {
+		var matchRef = dataBase.ref('/match');
+		matchRef.on("value", function(snapshot) {
+			ID = snapshot.numChildren();
+			resolve(ID);
 		});
-	}	
+		
+	});
+
+	returnId.then(function(idPartida) {//retorna o ID
+		console.log("ID Success");
+		console.log(idPartida);; // Success!
+		
+		//----------------------------------------------------\/
+		matchRef.once('value', function(snapshot){
+			snapshot.forEach(function(x) {
+
+				if(UID !== x.val().player1 && UID !== x.val().player1){
+					console.log("nao tem o uid no banco");
+				}else{
+					console.log("uid em partida");
+				}
+				if(x.val().id == idPartida){
+					if(x.val().player1 !== x.val().player2){
+						if(UID !== x.val().player1 && UID !== x.val().player1){//cadastro novo jogador //p2
+							console.log("Diferente");
+							firebase.database().ref('/match').push({//cadastra 2° jogador
+								id: idPartida+1,
+								player1: UID,
+								player2: UID
+							});
+						}
+					}
+				}
+			});
+		});
+		//----------------------------------------------------------/\
+		
+		
+	}, function(reason) {//falha em retornar o id
+		console.log("ID Error");
+		console.log(reason); // Error!
+	});
+
+	//------------------------------------------------------------------------------------------------------/\
+
 	
-	// if(UidExist == 1){//new match
+	//-------------------------------------------------------------
 	
-		// matchRef.once('value', function(snapshot){
-			// //console.log("snapshot"+snapshot.val().length)
+	// var matchRef = dataBase.ref('/match');
+
+	// matchRef.once('value', function(snapshot){
+		// if(!snapshot.val()){//verifica se existe alguma partida
+			// if (snapshot.val().player1 !== snapshot.val().player2 && snapshot.val().id == ID-1){//se os 2 ids forem diferentes esta tudo certo com a partida 
+																						// //e pega o ultimo cadastro do banco id-1 para ver se esta certo e 
+																						// //cria uma nova partida
 				
-			// if(snapshot.val().player1 === snapshot.val().player2){//cadastro novo jogador //p2
-	
-				// var idPlayer1 = snapshot.val().player1;
-				// firebase.database().ref('/match').set({//cadastra 2° jogador
+				// console.log("pass new match");
+				// firebase.database().ref('/match').push({//cadastra new match
 					// id: ID,
-					// player1: idPlayer1,
+					// player1: PUID,
 					// player2: PUID
-				// });
-			// } 
-				
-				
-		// });
-	// }
-	
+				// });					
+			// }
+		// }
+	// });
 
 }
 
@@ -600,19 +673,33 @@ function create() {
 
    fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
    
+	
+
+}
+
+var pass = 0;
+function initFunc(){//cha as funçoes
 	getPlayerNumUpdate();
 	//criaPartida(2);
 
 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
+	newMatch(firebase.auth().currentUser.uid);//cadastra players na partida
 
-	
-   getThings(firebase.auth().currentUser.uid);
-   console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
-
+	getThings(firebase.auth().currentUser.uid);
+	console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
 }
 
-function update() {
 
+function update() {
+	if(firebase.auth().currentUser.uid && pass != 2){
+		pass = 1;
+	}
+	
+	if(pass == 1){//faz passar pelas funçoes somente quando o pass for 1
+		initFunc();
+		pass = 2;
+	}
+	
     // dude.flow();
     // console.log("WIDHT: " + game.scale.width);
     // console.log("HEIGHT: " + game.scale.height);
