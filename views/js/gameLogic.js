@@ -23,6 +23,22 @@ var players = [];
 var player1;
 var player2;
 
+var dead = false;
+var waitingTurns = 0;
+var enemyTurn = false;
+
+var attackText;
+var defendText;
+
+var playerClass;
+
+// var button;
+var buttonGroupMage;
+var buttonGroupWarrior;
+
+var criarButton = true;
+
+
 
 var playerNum = 0;
 var PartidaNum = 0;
@@ -40,10 +56,6 @@ var config = {
 		messagingSenderId: "493837150254"
     };
 firebase.initializeApp(config);
-
-
-
-
 
 /*function criaP1(){
 	console.log("pass");
@@ -235,10 +247,26 @@ function getThings(uid) {
 						
                         if(players[0].character.class == "mage"){
 	
+                            playerClass = "mage";
+                            buttonGroupMage = game.add.group();
+
+                            buttonGroupWarrior = game.add.group();
+
+   
+                            createButtons();
+                            // console.log("CLASSE AAAAA: " + playerClass);
 							LoadSpritesMage(playerNum % 2);
                             console.log("pMage: "+ players[0].character.class);
                         } else{
 
+                            playerClass = "warrior";
+                            buttonGroupMage = game.add.group();
+
+                            buttonGroupWarrior = game.add.group();
+
+   
+                            createButtons();
+                            // console.log("CLASSE AAAAA: " + playerClass);
 							LoadSpritesWarrior(playerNum % 2);
                             console.log("pWarrior: "+ players[0].character.class);
 							
@@ -320,6 +348,8 @@ function preload() {
     
     game.load.image('mage', 'assets/blackMage.png');
     game.load.image('warrior', 'assets/warrior.png');
+    game.load.spritesheet('button', 'assets/button.png', 297, 87);
+
 	
     // game.load.particleEffect('party', 'partyMagic.json');
     // game.load.particleEffect('partyMagic.json');
@@ -361,16 +391,101 @@ function LoadSpritesMage(p1p2){
 	}
 }
 
+function turns(){
+    socket.on('playersTurn', function () {
+		if(dead)
+			return;
+		
+		if(waitingTurns > 0){
+			waitingTurns--;
+			socket.emit('passTurn');
+			return;
+		}
+		enemyTurn = false;
+		
+	});
+}
+
+
+function actionOnClick (text) {
+
+    console.log("CLIQUEI Attack");
+
+
+
+}
+
+function actionOnClick2 (text) {
+
+
+    console.log("CLIQUEI Defend!");
+
+
+}
+
+function actionOnClick3 (text) {
+
+
+    console.log("CLIQUEI Fury!");
+
+
+}
+
+function actionOnClick4 (text) {
+
+    console.log("CLIQUEI Attract!");
+
+
+
+}
+
+function createButtons(){
+    console.log("yeeeeeeees");
+
+    if(playerClass == "mage"){
+
+
+        var buttonAttack = game.make.button(game.world.centerX - 400, 400, 'button', actionOnClick, this, 2, 1, 0);
+        var buttonDefend = game.make.button(game.world.centerX - 10, 400, 'button', actionOnClick2, this, 2, 1, 0);
+
+        buttonGroupMage.add(buttonAttack);
+        buttonGroupMage.add(buttonDefend);
+
+        attackText = game.add.text(game.world.centerX - 400, 400, 'Attack', {fontSize: '32px', fill: '#000'});
+        defendText = game.add.text(game.world.centerX - 10, 400, 'Defend', {fontSize: '32px', fill: '#000'});
+    }
+
+    else {
+        
+
+        var buttonFury = game.make.button(game.world.centerX - 400, 400, 'button', actionOnClick3, this, 2, 1, 0);
+        var buttonAttract = game.make.button(game.world.centerX - 10, 400, 'button', actionOnClick4, this, 2, 1, 0);
+
+        buttonGroupWarrior.add(buttonFury);
+        buttonGroupWarrior.add(buttonAttract);
+
+        furyText = game.add.text(game.world.centerX - 400, 400, 'Fury', {fontSize: '32px', fill: '#000'});
+        attractText = game.add.text(game.world.centerX - 10, 400, 'Attract', {fontSize: '32px', fill: '#000'});
+
+    }
+    console.log("CLASSE TNC: " + playerClass);
+}
+
+
 function create() {
-   
+
     
+
     // game.add.sprite(0, 0, 'star');
+
     
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  A simple background for our game
     game.add.sprite(0, 0, 'sky');
+
+   
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
@@ -441,6 +556,8 @@ function create() {
      }
 
     scoreText = game.add.text(16, 16, 'Score: 0', {fontSize: '32px', fill: '#000'});
+    
+
 
 
     //enemy
@@ -485,13 +602,24 @@ function create() {
    
 	getPlayerNumUpdate();
 	//criaPartida(2);
+<<<<<<< HEAD
 
 	getThings(firebase.auth().currentUser.uid);
 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
+=======
+	
+   getThings(firebase.auth().currentUser.uid);
+   console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
+
+
+ 
+
+>>>>>>> d06984609071264025cd0fc4ba1d3576d6cd4c4b
 
 }
 
 function update() {
+
     // dude.flow();
     // console.log("WIDHT: " + game.scale.width);
     // console.log("HEIGHT: " + game.scale.height);
