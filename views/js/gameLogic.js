@@ -131,7 +131,6 @@ function criaPartida(np){//quando um usuario loga o numero aumenta para verifica
 	});
 }
 
-var p2Cadastrado = 0;;
 //match
 function matchs(PUID){
 	var ID = 0;
@@ -173,7 +172,6 @@ function matchs(PUID){
 					
 					console.log(contKey);
 					console.log(snapshot.val());
-					if(contKey+1 == x.val().id){
 						firebase.database().ref('/match/'+Object.keys(snapshot.val())[contKey]).set(null);//remove o cadastro para cadastrar um atualizado com outra key				
 																	//se só usar o "set" ele remove a key e se usar o update ele mantem 
 																	//os dados e cadastra a mais, pois nao se tem a key
@@ -185,7 +183,7 @@ function matchs(PUID){
 							player1: idPlayer1,
 							player2: PUID
 						});
-					}
+					
 					console.log("Iguais");
 
 				}else{
