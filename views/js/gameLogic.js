@@ -602,19 +602,12 @@ function create() {
    
 	getPlayerNumUpdate();
 	//criaPartida(2);
-<<<<<<< HEAD
 
-	getThings(firebase.auth().currentUser.uid);
 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
-=======
+
 	
    getThings(firebase.auth().currentUser.uid);
    console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
-
-
- 
-
->>>>>>> d06984609071264025cd0fc4ba1d3576d6cd4c4b
 
 }
 
