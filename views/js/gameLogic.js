@@ -131,7 +131,7 @@ function criaPartida(np){//quando um usuario loga o numero aumenta para verifica
 	});
 }
 
-
+var p2Cadastrado = 0;;
 //match
 function matchs(PUID){
 	var ID = 0;
@@ -171,22 +171,26 @@ function matchs(PUID){
 					//console.log(snapshot.val().player2);
 					var idPlayer1 = x.val().player1;
 					
-					console.log(Object.keys(snapshot.val())[contKey]);
-					
-					firebase.database().ref('/match/'+Object.keys(snapshot.val())[contKey]).set(null);//remove o cadastro para cadastrar um atualizado com outra key				
-																//se só usar o "set" ele remove a key e se usar o update ele mantem 
-																//os dados e cadastra a mais, pois nao se tem a key
-					
-					var newKey = firebase.database().ref('/match').push().key;//cria uma nova key
+					console.log(contKey);
+					console.log(snapshot.val());
+					if(contKey+1 == x.val().id){
+						firebase.database().ref('/match/'+Object.keys(snapshot.val())[contKey]).set(null);//remove o cadastro para cadastrar um atualizado com outra key				
+																	//se só usar o "set" ele remove a key e se usar o update ele mantem 
+																	//os dados e cadastra a mais, pois nao se tem a key
+						
+						var newKey = firebase.database().ref('/match').push().key;//cria uma nova key
 
-					firebase.database().ref('/match/' + Object.keys(snapshot.val())[contKey]).set({//cadastra 2° jogador
-						id: contKey+1,
-						player1: idPlayer1,
-						player2: PUID
-					});
-				
+						firebase.database().ref('/match/' + Object.keys(snapshot.val())[contKey]).set({//cadastra 2° jogador
+							id: contKey+1,
+							player1: idPlayer1,
+							player2: PUID
+						});
+					}
 					console.log("Iguais");
 
+				}else{
+					newMatch(firebase.auth().currentUser.uid);//cadastra players na partida
+					
 				}
 				contKey++;
 			});
@@ -201,13 +205,26 @@ function matchs(PUID){
 
 function newMatch(UID){
 	var ID;
+	var idEmUso = 0;
 	var matchRef = dataBase.ref('/match');
 	
 		//espera até que retorne o ultimo ID-----------------------------------------------------------\/
 	var returnId = new Promise(function returnId(resolve, reject) {
 		var matchRef = dataBase.ref('/match');
-		matchRef.on("value", function(snapshot) {
+		matchRef.once("value", function(snapshot) {
 			ID = snapshot.numChildren();
+			
+			snapshot.forEach(function(x) {
+
+				if(UID !== x.val().player1 && UID !== x.val().player2){
+					console.log("nao tem o uid no banco");
+					idEmUso = 1
+				}else{
+					idEmUso = 2;
+					console.log("uid em partida");
+				}
+			})
+			
 			resolve(ID);
 		});
 		
@@ -217,24 +234,22 @@ function newMatch(UID){
 		console.log("ID Success");
 		console.log(idPartida);; // Success!
 		
+
 		//----------------------------------------------------\/
 		matchRef.once('value', function(snapshot){
 			snapshot.forEach(function(x) {
-
-				if(UID !== x.val().player1 && UID !== x.val().player1){
-					console.log("nao tem o uid no banco");
-				}else{
-					console.log("uid em partida");
-				}
-				if(x.val().id == idPartida){
+				console.log("idEmUso");
+				console.log(idEmUso);
+				if(x.val().id == idPartida && idEmUso == 1){
 					if(x.val().player1 !== x.val().player2){
-						if(UID !== x.val().player1 && UID !== x.val().player1){//cadastro novo jogador //p2
+						if(UID !== x.val().player1 && UID !== x.val().player2){//cadastro novo jogador //p2
 							console.log("Diferente");
 							firebase.database().ref('/match').push({//cadastra 2° jogador
-								id: idPartida+1,
+								id: idPartida,
 								player1: UID,
 								player2: UID
 							});
+
 						}
 					}
 				}
@@ -249,7 +264,8 @@ function newMatch(UID){
 	});
 
 	//------------------------------------------------------------------------------------------------------/\
-
+	
+	return false;
 	
 	//-------------------------------------------------------------
 	
@@ -683,7 +699,7 @@ function initFunc(){//cha as funçoes
 	//criaPartida(2);
 
 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
-	newMatch(firebase.auth().currentUser.uid);//cadastra players na partida
+
 
 	getThings(firebase.auth().currentUser.uid);
 	console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
