@@ -360,7 +360,7 @@ function getThings(uid) {
                         }
 
 						// getNewEnemy();
-						getEnemy();
+						playerReady();
                        
 				    }
 				}
@@ -368,9 +368,9 @@ function getThings(uid) {
 		})
 }
 
-function getEnemy(){
+function playerReady(){
 
-	socket.emit("phaserAsksforEnemies");
+	socket.emit("playerReady");
 }
 
 
@@ -610,7 +610,7 @@ function attack(numberAttack){
 function update() {
 
 	if(noEnemy == true){
-		noEnemy = false;		
+		noEnemy = false;
 		socket.on('getEnemy', function (inimigo) {
 			
 			console.log("got enemy");  

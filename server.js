@@ -149,6 +149,7 @@ var turnCount = 0; //se = 2, monstro ataca
 var usedAttract = false;
 var userAttractedUid;
 var enemyBurned = false;
+var playersReady = 0;
 
 healPlayer = function(mage, className){
 
@@ -516,7 +517,7 @@ io.sockets.on('connection', function (client) {
 			io.sockets.emit('enemyDamaged', currentMonster.hp);
 			turnCount++;
 			CheckMonsterAttack();
-			console.log('monster hp is ' + currentMonster.hp);
+			console.log(currentMonster.hp);
 		}, 2000);
 	});
 
@@ -535,9 +536,12 @@ io.sockets.on('connection', function (client) {
 		}
 	}
 
-	client.on('phaserAsksforEnemies', function(){
+	client.on('playerReady', function(){
 		// console.log("PhasertoServer WORKS!");
-		getNewEnemy();		
+		playersReady++;
+		if(playersReady == 2){
+			getNewEnemy();		
+		}
 	});
 
 	client.on('passTurn', function () { 
