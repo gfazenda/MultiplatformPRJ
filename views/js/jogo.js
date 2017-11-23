@@ -122,7 +122,6 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 			$scope.enemyHP = inimigo.hp;
 			$scope.enemyPower = inimigo.power;
 		 });
-
 	});
 
 	$scope.attack = function(numberAttack){

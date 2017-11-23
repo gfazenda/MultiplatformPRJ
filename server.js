@@ -288,7 +288,7 @@ damageMonster = function(damage){
 	
 }
 
-getNewEnemy = function(damage){
+getNewEnemy = function(){
 	var enemiesRef = dataBase.ref('/enemiesSprite');
 	
 	//getRandomEnemy() - > retorna o nome do iimigo
@@ -298,6 +298,8 @@ getNewEnemy = function(damage){
 			if(enemy.val().name == nameEnemy){
 				currentMonster = enemy.val();
 				console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
+				console.log("enemyval().hp is: " + enemy.val().hp);
+				console.log("currentmonster.hp is: " + currentMonster.hp);				
 				// client.emit('trazInimigo', enemy.val());
 				// client.broadcast.emit('trazInimigo', enemy.val());
 				io.sockets.emit('getEnemy', enemy.val());
@@ -496,21 +498,22 @@ io.sockets.on('connection', function (client) {
 
 	client.on('attack', function (info) { 
 		//client.emit('enviaOsPlayers', jogadoresRef);
-		console.log(info);
+		// console.log("INFO: " + info);
 		attacker = getCharacter(info.uid);
 		//console.log("CLASSE: " + character.class);
-		if(attacker.class == "mage"){
+		// console.log("INFOUID: " + info.uid);
+		if(info.class == "mage"){
 			//damage = 
-			attackMage(attacker, info.nAtaque);
+			attackMage(info.uid, info.nAtaque);
 		}else{
-			attackWarrior(attacker, info.nAtaque);
+			attackWarrior(info.uid, info.nAtaque);
 			if(info.nAtaque == 2){
 				userAttractedUid = info.uid;
 			}
 		}
 		setTimeout(function(){
 
-			io.sockets.emit('enemyDamaged',currentMonster.hp);
+			io.sockets.emit('enemyDamaged', currentMonster.hp);
 			turnCount++;
 			CheckMonsterAttack();
 			console.log('monster hp is ' + currentMonster.hp);
@@ -532,8 +535,9 @@ io.sockets.on('connection', function (client) {
 		}
 	}
 
-	client.on('PhasertoServer', function(){
-		console.log("PhasertoServer WORKS!");
+	client.on('phaserAsksforEnemies', function(){
+		// console.log("PhasertoServer WORKS!");
+		getNewEnemy();		
 	});
 
 	client.on('passTurn', function () { 
