@@ -204,7 +204,8 @@ attackMage = function(mage, numberAttack){
 	// 4 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
 	// 5 - Bola de fogo (queima inimigo, dano por turno)
 	
-	var damage = mage.power;
+	var mageChar = getCharacter(mage);
+	var damage = mageChar.power;
 
 	switch(numberAttack){
 			
@@ -303,7 +304,7 @@ getNewEnemy = function(){
 				console.log("currentmonster.hp is: " + currentMonster.hp);				
 				// client.emit('trazInimigo', enemy.val());
 				// client.broadcast.emit('trazInimigo', enemy.val());
-				io.sockets.emit('getEnemy', enemy.val());
+				io.sockets.emit('getEnemy', currentMonster);
 			}
 		})
 
@@ -454,33 +455,35 @@ io.sockets.on('connection', function (client) {
 					console.log('sending char found')
 					var existingCharacter = getCharacter(uid);
 					if(existingCharacter == null){
-					var newPlayer = new playerInfo(uid,obj.val());
-					players.push(newPlayer);
-					console.log('size ' + players.length);
-					if(players.length == 1){
-						client.emit('sendCharacter', players[0].character); //envia o objeto do client
-					}else{
-						client.emit('sendCharacter', players[1].character); //envia o objeto do client
-						client.emit('sendPartner', players[0].character);//envia 'parceiro' do client
-						client.broadcast.emit('sendPartner', players[1].character); //envia 'parceiro' do outro client
-						console.log('send monster')
-						getNewEnemy();
+						var newPlayer = new playerInfo(uid,obj.val());
+						players.push(newPlayer);
+						console.log('size ' + players.length);
+						if(players.length == 1){
+							client.emit('sendCharacter', players[0].character); //envia o objeto do client
+						}
+						else{
+							client.emit('sendCharacter', players[1].character); //envia o objeto do client
+							client.emit('sendPartner', players[0].character);//envia 'parceiro' do client
+							client.broadcast.emit('sendPartner', players[1].character); //envia 'parceiro' do outro client
+							// console.log('send monster')
+							// getNewEnemy();
+						}
 					}
-				}else{
-					client.emit('sendCharacter', existingCharacter);
-					if(players.length == 2){
-						existingCharacter == players[0] ? client.broadcast.emit('sendPartner', players[1].character) : 
-						client.broadcast.emit('sendPartner', players[0].character);
-					}
+					else{
+						client.emit('sendCharacter', existingCharacter);
+						if(players.length == 2){
+							existingCharacter == players[0] ? client.broadcast.emit('sendPartner', players[1].character) : 
+							client.broadcast.emit('sendPartner', players[0].character);
+						}
 
-				}
+					}
 				}
 			});
 		})
-		if(players.length == 2){
-			console.log('send monster')
-			getNewEnemy();
-		}
+		// if(players.length == 2){
+		// 	console.log('send monster')
+		// 	getNewEnemy();
+		// }
 	
 	});
 	//-------------------------------------------------------------
@@ -499,12 +502,17 @@ io.sockets.on('connection', function (client) {
 
 	client.on('attack', function (info) { 
 		//client.emit('enviaOsPlayers', jogadoresRef);
-		// console.log("INFO: " + info);
+		console.log("INFO: ");
+		console.log(info);
+
 		attacker = getCharacter(info.uid);
+		console.log("ATTACKER: ");
+		console.log(attacker);
+
 		//console.log("CLASSE: " + character.class);
 		// console.log("INFOUID: " + info.uid);
-		if(info.class == "mage"){
-			//damage = 
+		if(attacker.class == "mage"){
+			console.log("RECONHECEU MAGE");
 			attackMage(info.uid, info.nAtaque);
 		}else{
 			attackWarrior(info.uid, info.nAtaque);
@@ -517,7 +525,7 @@ io.sockets.on('connection', function (client) {
 			io.sockets.emit('enemyDamaged', currentMonster.hp);
 			turnCount++;
 			CheckMonsterAttack();
-			console.log(currentMonster.hp);
+			console.log("Enemy hp is: " + currentMonster.hp);
 		}, 2000);
 	});
 
@@ -540,7 +548,8 @@ io.sockets.on('connection', function (client) {
 		// console.log("PhasertoServer WORKS!");
 		playersReady++;
 		if(playersReady == 2){
-			getNewEnemy();		
+			getNewEnemy();
+			io.sockets.emit('canRenderPlayers');
 		}
 	});
 
