@@ -52,20 +52,20 @@ app.use(expressSession({
 }));
  
 // Compartilhando a sessão válida do Express no Socket.IO
-io.use(function(socket, next) {
-	var data = socket.request;
-	cookie(data, {}, function(err) {
-		var sessionID = data.signedCookies[KEY];
-		store.get(sessionID, function(err, session) {
-			if (err || !session) {
-				return next(new Error('Acesso negado!'));
-			} else {
-				socket.handshake.session = session;
-				return next();
-			}
-		});
-	});
-});
+// io.use(function(socket, next) {
+// 	var data = socket.request;
+// 	cookie(data, {}, function(err) {
+// 		var sessionID = data.signedCookies[KEY];
+// 		store.get(sessionID, function(err, session) {
+// 			if (err || !session) {
+// 				return next(new Error('Acesso negado! ' + err + session));
+// 			} else {
+// 				socket.handshake.session = session;
+// 				return next();
+// 			}
+// 		});
+// 	});
+// });
  
 app.get('/personagem', function(request, response){
 
@@ -322,6 +322,12 @@ io.sockets.on('connection', function (client) {
 		nome = nomeJogador;
 	});
 
+	client.on('testthing', function () {
+		 console.log('godfodjf');
+		 client.emit('hellohello', 'blablabalbl');
+	
+	});
+
 	client.on('toServer', function (msg) {
 		msg = "<b>" + nome + ":</b> " + msg + "<br>";
 		client.emit('toClient', msg);
@@ -385,6 +391,7 @@ io.sockets.on('connection', function (client) {
 	//Inimigos---------------------------------------------------\/
 	client.on('buscaInimigo', function () {
 		getNewEnemy();
+		console.log('asked');
 	});
 	//-----------------------------------------------------------/\
 	
