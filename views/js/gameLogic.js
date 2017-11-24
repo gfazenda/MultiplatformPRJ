@@ -46,10 +46,17 @@ var playerID;
 
 var textEnemyHP;
 
+var partnerCharacter;			
+var player2URL;
+var player2HP;
+var myCharacter;
+var player1URL;
+var player1HP;
+var classMage = false;
+
 var promiseLoad = new Promise(function(resolve, reject) {
 	// do a thing, possibly async, then…
   
-	// getThings(firebase.auth().currentUser.uid);
 	Initialize();
 
 	if (playerClass != null) {
@@ -107,17 +114,23 @@ firebase.initializeApp(config);
 	})
 
 }*/
+
+// $scope.getMyCharacter = function() {
+// 		console.log('getting char');
+// 		socket.emit('getCharacter', firebase.auth().currentUser.uid);
+		
+// }
         
-function getCharacter(uid){
-		//console.log('blabla ' + players.length)
-		console.log(uid)
-		for(var i=0;i<players.length;i++){
-			if(players[i].uid == uid){
-				return players[i].character;
-			}
-		}
-		return null;
-}
+// function getCharacter(uid){
+// 		//console.log('blabla ' + players.length)
+// 		console.log(uid)
+// 		for(var i=0;i<players.length;i++){
+// 			if(players[i].uid == uid){
+// 				return players[i].character;
+// 			}
+// 		}
+// 		return null;
+// }
 
 function playerInfo(uid,obj){
 	this.uid = uid;
@@ -315,7 +328,7 @@ function getPlayerNumUpdate() {
 
 function getThings(uid) { 
 
-		var personagemRef = dataBase.ref('/personagem');
+		// var personagemRef = dataBase.ref('/personagem');
 		personagemRef.once('value', function(snapshot){
 			snapshot.forEach(function(obj) {
 				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
@@ -387,7 +400,7 @@ function checkIfLoggedIn(){
 
 function Initialize() {
 	// console.log('starting maaan222');
-	players = [];		
+	// players = [];		
 	checkIfLoggedIn();
 }
     
@@ -515,7 +528,9 @@ function start() {
 	
 		game.load.image('picture1', 'assets/loading.png');
 		
-		getThings(firebase.auth().currentUser.uid);
+		// getThings(firebase.auth().currentUser.uid);
+		playerReady();
+		socket.emit('getCharacter', firebase.auth().currentUser.uid);
 		
 		game.load.start();
 	
@@ -525,7 +540,6 @@ function start() {
 	}
 
 function loadStart() {
-	// getThings(firebase.auth().currentUser.uid);
 	
 	// loadText.setText("Loading ...");
 	console.log("LOAD START(): " + firebase.auth().currentUser.uid)
@@ -551,6 +565,10 @@ function fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
 		x = 32;
 		y += 332;
 	}
+
+	console.log("MYCHARACTER:" + myCharacter);
+	console.log("PARTNER:" + partnerCharacter);
+
 }
 	
 function loadComplete() {
@@ -589,7 +607,6 @@ function create() {
 // 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
 
 
-// 	getThings(firebase.auth().currentUser.uid);
 // 	console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
 // }
 
@@ -624,12 +641,68 @@ function update() {
 			
 			textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
 		});
+
+		socket.on('canRenderPlayers', function () {
+
+			if(playerClass == 'mage'){
+				var player1Sprite = game.add.sprite(400, 300,'mage');
+				player1Sprite.scale.setTo(0.25, 0.25);
+
+				var player2Sprite = game.add.sprite(600, 300,'warrior');
+				player2Sprite.scale.setTo(0.1, 0.1);
+
+				buttonGroupMage = game.add.group();
+
+				createButtons();
+
+			}
+			else{
+				var player1Sprite = game.add.sprite(400, 300, 'warrior');
+				player1Sprite.scale.setTo(0.1, 0.1);
+
+				var player2Sprite = game.add.sprite(600, 300,'mage');
+				player2Sprite.scale.setTo(0.25, 0.25);
+
+				buttonGroupWarrior = game.add.group();
+
+				createButtons();
+
+
+			}
+			
+			
+			enemy.scale.set(0.5);
+			
+			textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
+		});
+
+		socket.on('sendCharacter', function (char) {
+		console.log('got char');
+		myCharacter = char;
+		player1URL = char.sprite;
+		player1HP = char.hp;
+		playerClass = char.class;
+		//$scope.player1Power = char.power;
+		if(char.class == "mage"){
+			classMage = true;
+		}
+			console.log(classMage);
+	});
+
+	socket.on('sendPartner', function (char) {
+		console.log('got partner');
+		partnerCharacter = char;			
+		player2URL = char.sprite;
+		player2HP = char.hp;
+		//$scope.player2Power = char.power;		
+	});
 	}
 
 	socket.on('enemyDamaged', function (hpMonster) {
 		
 		enemyHP = hpMonster;
 		console.log("ENEMYHP IS: " + enemyHP);
+		textEnemyHP.setText('HP Enemy: ' + enemyHP);			
 	});
 
     if(cursors.left.isDown)
