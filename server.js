@@ -52,20 +52,20 @@ app.use(expressSession({
 }));
  
 // Compartilhando a sessão válida do Express no Socket.IO
-io.use(function(socket, next) {
-	var data = socket.request;
-	cookie(data, {}, function(err) {
-		var sessionID = data.signedCookies[KEY];
-		store.get(sessionID, function(err, session) {
-			if (err || !session) {
-				return next(new Error('Acesso negado!'));
-			} else {
-				socket.handshake.session = session;
-				return next();
-			}
-		});
-	});
-});
+// io.use(function(socket, next) {
+// 	var data = socket.request;
+// 	cookie(data, {}, function(err) {
+// 		var sessionID = data.signedCookies[KEY];
+// 		store.get(sessionID, function(err, session) {
+// 			if (err || !session) {
+// 				return next(new Error('Acesso negado!'));
+// 			} else {
+// 				socket.handshake.session = session;
+// 				return next();
+// 			}
+// 		});
+// 	});
+// });
  
 app.get('/personagem', function(request, response){
 
@@ -336,6 +336,11 @@ io.sockets.on('connection', function (client) {
 	client.on('toServer2', function (nomeJogador) {
 		// console.log(nomeJogador);
 		nome = nomeJogador;
+	});
+
+	client.on('testthing', function (msg) {
+		console.log('socket workd ' + msg);
+		client.emit('hellohello', 'hohoho');
 	});
 
 	client.on('toServer', function (msg) {
