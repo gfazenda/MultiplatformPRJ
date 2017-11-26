@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>		
+	<head> 
+
+		<title>first express</title>
+		<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
+		<script src="http://multiplataforma-gb-gabrielfazenda.c9users.io/socket.io/socket.io.js"></script>
+		
+		<script>
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyBVVQnrtmt9D9arsU0xTrNB7s9pHeX6tac",
+                authDomain: "teste-firebase-23985.firebaseapp.com",
+                databaseURL: "https://teste-firebase-23985.firebaseio.com",
+                projectId: "teste-firebase-23985",
+                storageBucket: "teste-firebase-23985.appspot.com",
+                messagingSenderId: "493837150254"
+            };
+            firebase.initializeApp(config);
+            
+        </script>
+
+	</head>
+	
+	<body> 
+
+		<div id="personagem" ng-app="myPersonagem" ng-controller="personagem">
+
+			<p>Nome: <input id="addChar"  /></p>
+
+			
+				<div class="row">
+
+					<div class="col s3 m3">
+						<input name="grp1" type="radio" id="r1" ng-model="escolhaPersonagem.numero" value="1">
+							<label for="r1">	
+							</label>
+						</input>
+						
+						<div class="card blue-grey darken-1">
+							<div class="card-content white-text">
+							
+								<span class="card-title">
+									<p id="classChar1" align="center"></p>
+
+									<p><img id="spriteChar1" width="50" height="50"></img></p>
+								</span>
+								
+								<div class="card-action">
+
+									<p id="powerChar1"></p>
+									<p id="hpChar1"></p>
+									<p id="mpChar1"></p>
+			
+								</div>
+							</div>
+						</div>
+					</div>
+
+						
+					
+					<div class="col s3 m3">
+					
+						<input name="grp1" type="radio" id="r2"  ng-model="escolhaPersonagem.numero" value="2">
+							<label for="r2">
+							</label>
+						</input>
+						
+						<div class="card blue-grey darken-1">
+							<div class="card-content white-text">
+							
+								<span class="card-title">
+									<p id="classChar2" align="center"></p>
+
+									<p><img id="spriteChar2" width="50" height="50"></img></p>
+								</span>
+								
+								<div class="card-action">
+
+									<p id="powerChar2"></p>
+									<p id="hpChar2"></p>
+									<p id="mpChar2"></p>
+			
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				
+			<button id="addCharbtn" ng-click="criaPersonagem(escolhaPersonagem.numero)"> addChar </button>
+		
+			<button id="voltarOut" ng-click="voltar()"> 
+				voltar
+			</button>
+		</div>
+		
+		<script src="js/personagem.js"></script>
+	
+
+	</body>
+</html>

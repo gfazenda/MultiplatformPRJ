@@ -27,6 +27,9 @@ function myTest() {
     document.getElementById("title").innerHTML = "i work";
 }
 
+function GoLogIn() {
+   window.location.href = '/home.html'; 
+}
 
 socket.on('hellohello', (char) => {
     document.getElementById("title").innerHTML = char;

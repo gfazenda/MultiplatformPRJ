@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>		
+	<head> 
+
+		<title>Game Home Page</title>
+		<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
+		<script src="http://multiplataforma-gb-gabrielfazenda.c9users.io/socket.io/socket.io.js"></script>
+        <script src="//cdn.jsdelivr.net/phaser/2.2.2/phaser.min.js"></script>
+
+        <!--<script src="js/gameLogic.js"></script>-->
+        <script src="js/jogo.js"></script>
+        <script src="js/gameLogic.js"></script>
+
+		<style>
+
+            #iconChange {
+                    
+            }
+
+            #imgBTN {
+                position: relative;
+            }
+
+            #cardAbove {
+                position: absolute;
+                top: 80%;
+                left: 38%;
+            }
+
+            #cardAbove2 {
+                position: absolute;
+                top: 5%;
+                left: 50%;
+                font-size: 20px;
+                color: white;
+            }
+
+            #infoCardAbove {
+                position: absolute;
+                top: 5%;
+                left: 5%;
+                font-size: 25px;
+                color: white;
+            }
+
+			
+            #player1Above {
+                position: absolute;
+                top: 30%;
+                right: 20%;
+            }
+
+            #player2Above {
+                position: absolute;
+                top: 35%;
+                right: 15%;
+            }
+
+            #playerHP {
+                font-size: 40px;
+                color: white;
+            }
+
+            #enemyAbove {
+                position: absolute;
+                top: 30%;
+                left: 10%;
+            }
+
+            #enemyHP {
+                font-size: 40px;
+                color: white;
+            }
+
+            .container {
+                margin: 0 auto; 
+                max-width: 1280px;
+                width: 90%;
+            }
+            @media only screen and (min-width: 601px){
+                .container {
+                    width: 85%;
+                }
+            }
+            @media only screen and (min-width: 993px){
+                .container {
+                    width: 70%;
+                }
+            }
+
+            phaserG{
+
+            margin:auto; 
+            display:block;
+            }
+        </style>
+	</head>
+	
+	<body class="teal lighten-2"> 
+
+		<div id="jogo" ng-app="myJogo" ng-controller="jogo" ng-init="Initialize()">
+			
+			<!-- <section> -->
+				<!-- <pre id="chat"></pre> -->
+				<!-- <input type="text" id="msg" placeholder="Sua mensagem"> -->
+				<!-- <input type="button" ng-click="enviar();" value="Enviar"> -->
+			<!-- </section> -->
+
+			<!-- <input type="radio" name="ataque" ng-model="ataque.numero" value="1">ataque1</input><br> -->
+			<!-- <input type="radio" name="ataque" ng-model="ataque.numero" value="2">ataque2</input><br> -->
+			<!-- <input type="radio" name="ataque" ng-model="ataque.numero" value="3">ataque3</input><br> -->
+
+		    <!-- <input type="submit" ng-click="ataque(ataque.numero)" value="Atacar"> -->
+
+		<!-- </div> -->
+
+            
+            
+		    <div class="row">
+                <nav class="light-blue lighten-1" role="navigation">
+                    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Game Logo</a></div>
+                </nav>
+            </div> 
+
+            <div class="container">
+                <div class="row">
+                    <div class="col s1 l1">
+                        <div id="phaserG" class="responsive-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--<div class="row">-->
+                <!--<div class="col l1 offset-l2 " >-->
+                
+            <!--</div>-->  
+
+            <div class="row">
+
+                <div class="col l1 offset-l2 " style="margin-bottom: 20px">
+                    <a href="#" data-activates="slide-out" class="button-collapse btn-floating btn-large waves-effect waves-light #ba68c8 purple lighten-2" onclick="showSideNav()">
+                        <i id="iconChange" class="material-icons">add</i>
+                    </a>
+                </div>
+
+                
+
+                <div class="container">
+
+                    <div id="imgBTN" class="col l12 s12">
+
+                        <img class = "responsive-img" src="assets/background.jpg"  ></img>
+
+                        <!--INFO CARD-->
+                        <div id="infoCardAbove" class="card teal ">
+                            <div class="card-content">
+                                <p>Round: </p>
+                                <p ng-bind="round"></p>
+                            </div>
+                        </div>
+                        <!--INFO CARD-->
+
+                        <!--PLAYERS-->
+                        <div id="player1Above">
+                            <p id="playerHP" ng-bind="player1HP"></p>
+                            <img ng-src={{player1URL}} width="100%" height="100%"> </img>
+                        </div>
+
+                        <div id="player2Above">
+                            <p id="playerHP" ng-bind="player2HP"></p>
+                            <img  ng-src={{player2URL}} width="100%" height="100%"> </img>
+                        </div>
+                        <!--PLAYERS-->
+
+                        <!--ENEMY-->
+                        <div id="enemyAbove">
+                            <p id="enemyHP" ng-bind="enemyHP"></p>
+                            <img  id="enemyImg" ng-src={{enemyURL}} width="150" height="150"></img>
+					
+                        </div>
+                        <!--ENEMY-->
+
+                        <div id="cardAbove2" class="card teal" ng-if="showActionText"> 
+                            <div class="card-content">
+                                
+                                <div ng-bind="actionText">
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+						
+						<div id="cardAbove2" class="card red" ng-if="showActionTextMonster"> 
+                            <div class="card-content">
+                                
+                                <div ng-bind="actionText">
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+						
+                        <div id="cardAbove" class="card teal " ng-if="!enemyTurn"> 
+                            <div class="card-content">
+                                
+                                <div ng-if="classMage">
+                                    <div ng-if="!cureActive">
+                                        <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
+                                    
+                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(true)">Cure</a>
+
+                                        <a class="waves-effect waves-light btn" ng-click="attack(4)">Blessed Luck</a>
+
+                                        <a class="waves-effect waves-light btn" ng-click="attack(5)" onclick="Materialize.fadeInImage('#enemyImg')">Fireball</a>
+                                    </div>
+                                    <div ng-if="cureActive">
+                                        <a class="waves-effect waves-light btn" ng-click="attack(3); cureSelect(false)">Warrior</a>
+                                    
+                                        <a class="waves-effect waves-light btn" ng-click="attack(2); cureSelect(false)">Mage</a>
+
+                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(false)">Cancel</a>
+                                    </div>
+                                </div>
+
+                                <div ng-if="!classMage">
+                                    <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
+                                
+                                    <a class="waves-effect waves-light btn" ng-click="attack(2)">Attract</a>
+
+                                    <a class="waves-effect waves-light btn" ng-click="attack(3)">Fury</a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    
+            <!-- test navbar-->
+            <ul id="slide-out" class="side-nav #ba68c8 purple lighten-2">
+
+                <li><a href="#!"><i class="material-icons">pause</i>Pause</a></li>
+                <li><a href="#!"><i class="material-icons">web</i>Status</a></li>
+                <li><a href="#!"><i class="material-icons">star_border</i>Abilities</a></li>
+                <li><a href="#!"><i class="material-icons">error_outline</i>Give up</a></li>
+                <li><a href="#!"><i class="material-icons">videogame_asset</i>How to play</a></li>
+                <li><a href="#!"><i class="material-icons">volume_up</i>Sound</a></li>
+                <li><a href="#!"><i class="material-icons">settings_power</i>Logout</a></li>
+                
+            </ul>
+        </div>
+
+        <!-- test navbar-->
+
+        <footer class="page-footer orange ">
+            <div class="container">
+                <div class="row">
+                    <div class="col l6 s12">
+                        <h5 class="white-text">About</h5>
+                        <p class="grey-text text-lighten-4">Game developed to study and practice web development.</p>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Settings</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                    <div class="col l3 s12">
+                        <h5 class="white-text">Connect</h5>
+                        <ul>
+                            <li><a class="white-text" href="#!">Link 1</a></li>
+                            <li><a class="white-text" href="#!">Link 2</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <div class="container">
+                    Made by Bernardo Alvarez Braga, Gabriel Fazenda and Matheus Nunes
+                </div>
+            </div>
+        </footer> 
+
+        <!--Import jQuery before materialize.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+        <script src="js/jqueryFunctions.js"></script>
+        <script src="js/js_functions.js"></script>
+
+        <script>
+           // $(".dropdown-button").dropdown();
+             $('.button-collapse').sideNav({
+                menuWidth: 200, // Default is 300
+                edge: 'left', // Choose the horizontal origin
+                closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                draggable: true, // Choose whether you can drag to open on touch screens,
+                onOpen: function(el) { /* Do Stuff*/
+                    //$("footer.orange").removeClass("orange"); //FUNCIONA!
+                    //$("footer.page-footer").addClass("black"); //FUNCIONA!
+                    
+                    $("#iconChange").html('<i id="save" class="material-icons">remove</i>'); 
+                 }, 
+                onClose: function(el) { /* Do Stuff*/ 
+                    $("#iconChange").html('<i id="save" class="material-icons">add</i>'); 
+                },
+                }
+            );
+            function showSideNav(){
+                if($(".button-collapse").sideNav('hide')){
+                    $(".button-collapse").sideNav('show');
+                    // document.getElementById("battleBG").class = "col l5 s5";
+                    $("page-footer").addClass("orange");
+                    //$("#battleBG").class = "indigo darken-1";
+                   // $(".col l12 s12").addClass = "push-l7";
+                }
+                else{
+                    $(".button-collapse").sideNav('hide');
+                }
+            }
+            // $(document).ready(function(){
+            //     $('.modal-trigger').leanModal();
+            // });
+
+        </script>
+		
+        <!--<script> 
+            var socket = io();
+        </script>-->
+
+	</body>
+
+</html>
