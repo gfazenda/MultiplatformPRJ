@@ -71,8 +71,8 @@ var y = 600;
 
 var playerNum = 0;
 var PartidaNum = 0;
+//var socket = io.connect();
 const socket = io.connect('http://multiplataforma-gb-gabrielfazenda.c9users.io/');
-
 // socket.connect();
 // var socket = io.connect();
 
