@@ -25,7 +25,9 @@ var waitingTurns = 0;
 var enemyTurn = false;
 
 var attackText;
-var defendText;
+var cureText;
+var blessedLuckText;
+var fireballText;
 
 var playerClass;
 
@@ -423,16 +425,16 @@ function preload() {
 
 function LoadSpritesWarrior(p1p2){
 	if(p1p2 == 0){
-		player1 = game.add.sprite(400, 300, 'warrior');
+		player1 = game.add.sprite(500, 600, 'warrior');
 		player1.scale.setTo(0.1, 0.1);
 		
-		player2 = game.add.sprite(600, 300, 'mage');
+		player2 = game.add.sprite(700, 600, 'mage');
 		player2.scale.setTo(0.25, 0.25);
 	}else{
-		player2 = game.add.sprite(400, 300, 'warrior');
+		player2 = game.add.sprite(500, 600, 'warrior');
 		player2.scale.setTo(0.1, 0.1);
 		
-		player1 = game.add.sprite(600, 300, 'mage');
+		player1 = game.add.sprite(700, 600, 'mage');
 		player1.scale.setTo(0.25, 0.25);
 		
 	}
@@ -440,16 +442,16 @@ function LoadSpritesWarrior(p1p2){
 
 function LoadSpritesMage(p1p2){
     if(p1p2 == 0){
-		player1 = game.add.sprite(400, 300, 'mage');
+		player1 = game.add.sprite(500, 600, 'mage');
 		player1.scale.setTo(0.25, 0.25);
 
-		player2 = game.add.sprite(600, 300, 'warrior');
+		player2 = game.add.sprite(700, 600, 'warrior');
 		player2.scale.setTo(0.1, 0.1);
 	}else{
-		player1 = game.add.sprite(400, 300, 'warrior');
+		player1 = game.add.sprite(500, 600, 'warrior');
 		player1.scale.setTo(0.1, 0.1);
 		
-		player2 = game.add.sprite(600, 300, 'mage');
+		player2 = game.add.sprite(700, 600, 'mage');
 		player2.scale.setTo(0.25, 0.25);
 		
 	}
@@ -470,55 +472,92 @@ function turns(){
 	});
 }
 
-function actionOnClick (text) {
+function actionOnClickMage1 (text) {
 
 	console.log("CLIQUEI Attack");
 	attack(1);
 }
 
-function actionOnClick2 (text) {
+function actionOnClickMage2 (text) {
 
 
-    console.log("CLIQUEI Defend!");
+    console.log("CLIQUEI Cure!");
 }
 
-function actionOnClick3 (text) {
+function actionOnClickMage3 (text) {
 
 
-    console.log("CLIQUEI Fury!");
+    console.log("CLIQUEI Blessed Luck!");
 }
 
-function actionOnClick4 (text) {
+function actionOnClickMage4 (text) {
 
-    console.log("CLIQUEI Attract!");
+    console.log("CLIQUEI Fireball!");
 }
 
+function actionOnClickWarrior1 (text) {
+	
+	console.log("CLIQUEI Attack");
+	attack(1);
+}
+	
+function actionOnClickWarrior2 (text) {
+		
+	console.log("CLIQUEI Attract!");
+}
+	
+function actionOnClickWarrior3 (text) {
+		
+	console.log("CLIQUEI Fury!");
+}
+	
 function createButtons(){
 
     if(playerClass == "mage"){
 
 
-        var buttonAttack = game.make.button(game.world.centerX - 400, 400, 'button', actionOnClick, this, 2, 1, 0);
-        var buttonDefend = game.make.button(game.world.centerX - 10, 400, 'button', actionOnClick2, this, 2, 1, 0);
+        var buttonAttack = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickMage1, this, 2, 1, 0);
+		var buttonCure = game.make.button(game.world.centerX + 300, 200, 'button', actionOnClickMage2, this, 2, 1, 0);
+		var buttonBlessedLuck = game.make.button(game.world.centerX + 300, 300, 'button', actionOnClickMage3, this, 2, 1, 0);
+        var buttonFireball = game.make.button(game.world.centerX + 300, 400, 'button', actionOnClickMage4, this, 2, 1, 0);		
 
         buttonGroupMage.add(buttonAttack);
-        buttonGroupMage.add(buttonDefend);
+		buttonGroupMage.add(buttonCure);
+		buttonGroupMage.add(buttonBlessedLuck);
+		buttonGroupMage.add(buttonFireball);
 
-        attackText = game.add.text(game.world.centerX - 400, 400, 'Attack', {fontSize: '32px', fill: '#000'});
-        defendText = game.add.text(game.world.centerX - 10, 400, 'Defend', {fontSize: '32px', fill: '#000'});
+		attackText = game.add.text(buttonAttack.x + buttonAttack.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
+		attackText.anchor.set(0.5);		
+
+		cureText = game.add.text(buttonCure.x + buttonCure.width/2, 245, 'Cure', {fontSize: '32px', fill: '#000'});
+		cureText.anchor.set(0.5);		
+
+		blessedLuckText = game.add.text(buttonBlessedLuck.x + buttonBlessedLuck.width/2, 345, 'Blessed Luck', {fontSize: '32px', fill: '#000'});
+		blessedLuckText.anchor.set(0.5);		
+		
+		fireballText = game.add.text(buttonFireball.x + buttonFireball.width/2, 445, 'Fireball', {fontSize: '32px', fill: '#000'});
+		fireballText.anchor.set(0.5);				
+		
     }
 
     else {
         
+        var buttonAttack = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickWarrior1, this, 2, 1, 0);		
+		var buttonAttract = game.make.button(game.world.centerX + 300, 200, 'button', actionOnClickWarrior2, this, 2, 1, 0);
+		var buttonFury = game.make.button(game.world.centerX + 300, 300, 'button', actionOnClickWarrior3, this, 2, 1, 0);		
 
-        var buttonFury = game.make.button(game.world.centerX - 400, 400, 'button', actionOnClick3, this, 2, 1, 0);
-        var buttonAttract = game.make.button(game.world.centerX - 10, 400, 'button', actionOnClick4, this, 2, 1, 0);
+        buttonGroupWarrior.add(buttonAttack);
+		buttonGroupWarrior.add(buttonAttract);
+		buttonGroupWarrior.add(buttonFury);
 
-        buttonGroupWarrior.add(buttonFury);
-        buttonGroupWarrior.add(buttonAttract);
-
-        furyText = game.add.text(game.world.centerX - 400, 400, 'Fury', {fontSize: '32px', fill: '#000'});
-        attractText = game.add.text(game.world.centerX - 10, 400, 'Attract', {fontSize: '32px', fill: '#000'});
+		attackText = game.add.text(buttonAttack.x + buttonAttack.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
+		attackText.anchor.set(0.5);		
+		
+		attractText = game.add.text(buttonAttract.x + buttonAttract.width/2, 245, 'Attract', {fontSize: '32px', fill: '#000'});
+		attractText.anchor.set(0.5);		
+		
+		furyText = game.add.text(buttonFury.x + buttonFury.width/2, 345, 'Fury', {fontSize: '32px', fill: '#000'});	
+		furyText.anchor.set(0.5);				
 
     }
     console.log("CLASSE: " + playerClass);
@@ -645,29 +684,26 @@ function update() {
 		socket.on('canRenderPlayers', function () {
 
 			if(playerClass == 'mage'){
-				var player1Sprite = game.add.sprite(400, 300,'mage');
+				var player1Sprite = game.add.sprite(600, 400,'mage');
 				player1Sprite.scale.setTo(0.25, 0.25);
 
-				var player2Sprite = game.add.sprite(600, 300,'warrior');
+				var player2Sprite = game.add.sprite(800, 410,'warrior');
 				player2Sprite.scale.setTo(0.1, 0.1);
 
 				buttonGroupMage = game.add.group();
 
 				createButtons();
-
 			}
 			else{
-				var player1Sprite = game.add.sprite(400, 300, 'warrior');
+				var player1Sprite = game.add.sprite(600, 410, 'warrior');
 				player1Sprite.scale.setTo(0.1, 0.1);
 
-				var player2Sprite = game.add.sprite(600, 300,'mage');
+				var player2Sprite = game.add.sprite(800, 400,'mage');
 				player2Sprite.scale.setTo(0.25, 0.25);
 
 				buttonGroupWarrior = game.add.group();
 
 				createButtons();
-
-
 			}
 			
 			
