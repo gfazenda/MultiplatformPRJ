@@ -28,12 +28,16 @@ var attackText;
 var cureText;
 var blessedLuckText;
 var fireballText;
+var cureMageText;
+var cureWarriorText;
+var cancelText;
 
 var playerClass;
 
 var loadButton;
 
 var buttonGroupMage;
+var buttonGroupMage2;
 var buttonGroupWarrior;
 
 var criarButton = true;
@@ -351,8 +355,9 @@ function getThings(uid) {
 	
                             playerClass = "mage";
                             buttonGroupMage = game.add.group();
+							buttonGroupMage2 = game.add.group();
 
-                            buttonGroupWarrior = game.add.group();
+                            // buttonGroupWarrior = game.add.group();
 
    
                             createButtons();
@@ -362,7 +367,7 @@ function getThings(uid) {
                         } else{
 
                             playerClass = "warrior";
-                            buttonGroupMage = game.add.group();
+                            // buttonGroupMage = game.add.group();
 
                             buttonGroupWarrior = game.add.group();
 
@@ -482,6 +487,8 @@ function actionOnClickMage2 (text) {
 
 
     console.log("CLIQUEI Cure!");
+	buttonGroupMage.visible = false;
+	buttonGroupMage2.visible = true;
 }
 
 function actionOnClickMage3 (text) {
@@ -493,6 +500,23 @@ function actionOnClickMage3 (text) {
 function actionOnClickMage4 (text) {
 
     console.log("CLIQUEI Fireball!");
+}
+
+function cureMage (text) {
+
+    console.log("Curou Mage!");
+}
+
+function cureWarrior (text) {
+
+    console.log("Curou Warrior!");
+}
+
+function cancelAction (text) {
+
+    console.log("CLIQUEI Cancel!");
+	buttonGroupMage.visible = true;
+	buttonGroupMage2.visible = false;
 }
 
 function actionOnClickWarrior1 (text) {
@@ -536,8 +560,24 @@ function createButtons(){
 		blessedLuckText.anchor.set(0.5);		
 		
 		fireballText = game.add.text(buttonFireball.x + buttonFireball.width/2, 445, 'Fireball', {fontSize: '32px', fill: '#000'});
-		fireballText.anchor.set(0.5);				
-		
+		fireballText.anchor.set(0.5);	
+
+		var buttonCureMage = game.make.button(game.world.centerX + 300, 100, 'button', cureMage, this, 2, 1, 0);
+		var buttonCureWarrior = game.make.button(game.world.centerX + 300, 200, 'button', cureWarrior, this, 2, 1, 0);
+		var buttonCancel = game.make.button(game.world.centerX + 300, 300, 'button', cancelAction, this, 2, 1, 0);		
+
+		buttonGroupMage2.add(buttonCureMage);
+		buttonGroupMage2.add(buttonCureWarrior);
+		buttonGroupMage2.add(buttonCancel);	
+
+		cureMageText = game.add.text(buttonCureMage.x + buttonCureMage.width/2, 145, 'Mage', {fontSize: '32px', fill: '#000'});
+		cureMageText.anchor.set(0.5);		
+
+		cureWarriorText = game.add.text(buttonCureWarrior.x + buttonCureWarrior.width/2, 245, 'Warrior', {fontSize: '32px', fill: '#000'});
+		cureWarriorText.anchor.set(0.5);		
+
+		cancelText = game.add.text(buttonCancel.x + buttonCancel.width/2, 345, 'Cancel', {fontSize: '32px', fill: '#000'});
+		cancelText.anchor.set(0.5);
     }
 
     else {
