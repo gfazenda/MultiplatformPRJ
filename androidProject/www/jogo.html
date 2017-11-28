@@ -127,119 +127,20 @@
                 </nav>
             </div> 
 
+            <div class="row">
+                <div class="col l1 offset-l2 " style="margin-bottom: 20px">
+                    <a href="#" data-activates="slide-out" class="button-collapse btn-floating btn-large waves-effect waves-light #ba68c8 purple lighten-2" onclick="showSideNav()">
+                        <i id="iconChange" class="material-icons">add</i>
+                    </a>
+                </div> 
+            </div>
+
             <div class="container">
                 <div class="row">
                     <div class="col s1 l1">
                         <div id="phaserG" class="responsive-img">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!--<div class="row">-->
-                <!--<div class="col l1 offset-l2 " >-->
-                
-            <!--</div>-->  
-
-            <div class="row">
-
-                <div class="col l1 offset-l2 " style="margin-bottom: 20px">
-                    <a href="#" data-activates="slide-out" class="button-collapse btn-floating btn-large waves-effect waves-light #ba68c8 purple lighten-2" onclick="showSideNav()">
-                        <i id="iconChange" class="material-icons">add</i>
-                    </a>
-                </div>
-
-                
-
-                <div class="container">
-
-                    <div id="imgBTN" class="col l12 s12">
-
-                        <img class = "responsive-img" src="assets/background.jpg"  ></img>
-
-                        <!--INFO CARD-->
-                        <div id="infoCardAbove" class="card teal ">
-                            <div class="card-content">
-                                <p>Round: </p>
-                                <p ng-bind="round"></p>
-                            </div>
-                        </div>
-                        <!--INFO CARD-->
-
-                        <!--PLAYERS-->
-                        <div id="player1Above">
-                            <p id="playerHP" ng-bind="player1HP"></p>
-                            <img ng-src={{player1URL}} width="100%" height="100%"> </img>
-                        </div>
-
-                        <div id="player2Above">
-                            <p id="playerHP" ng-bind="player2HP"></p>
-                            <img  ng-src={{player2URL}} width="100%" height="100%"> </img>
-                        </div>
-                        <!--PLAYERS-->
-
-                        <!--ENEMY-->
-                        <div id="enemyAbove">
-                            <p id="enemyHP" ng-bind="enemyHP"></p>
-                            <img  id="enemyImg" ng-src={{enemyURL}} width="150" height="150"></img>
-					
-                        </div>
-                        <!--ENEMY-->
-
-                        <div id="cardAbove2" class="card teal" ng-if="showActionText"> 
-                            <div class="card-content">
-                                
-                                <div ng-bind="actionText">
-                                    
-                                </div>
-                                
-                            </div>
-                        </div>
-						
-						<div id="cardAbove2" class="card red" ng-if="showActionTextMonster"> 
-                            <div class="card-content">
-                                
-                                <div ng-bind="actionText">
-                                    
-                                </div>
-                                
-                            </div>
-                        </div>
-						
-                        <div id="cardAbove" class="card teal " ng-if="!enemyTurn"> 
-                            <div class="card-content">
-                                
-                                <div ng-if="classMage">
-                                    <div ng-if="!cureActive">
-                                        <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
-                                    
-                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(true)">Cure</a>
-
-                                        <a class="waves-effect waves-light btn" ng-click="attack(4)">Blessed Luck</a>
-
-                                        <a class="waves-effect waves-light btn" ng-click="attack(5)" onclick="Materialize.fadeInImage('#enemyImg')">Fireball</a>
-                                    </div>
-                                    <div ng-if="cureActive">
-                                        <a class="waves-effect waves-light btn" ng-click="attack(3); cureSelect(false)">Warrior</a>
-                                    
-                                        <a class="waves-effect waves-light btn" ng-click="attack(2); cureSelect(false)">Mage</a>
-
-                                        <a class="waves-effect waves-light btn" ng-click="cureSelect(false)">Cancel</a>
-                                    </div>
-                                </div>
-
-                                <div ng-if="!classMage">
-                                    <a class="waves-effect waves-light btn" ng-click="attack(1)" onclick="Materialize.fadeInImage('#enemyImg')">Attack</a>
-                                
-                                    <a class="waves-effect waves-light btn" ng-click="attack(2)">Attract</a>
-
-                                    <a class="waves-effect waves-light btn" ng-click="attack(3)">Fury</a>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
     
