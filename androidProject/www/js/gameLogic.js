@@ -23,6 +23,7 @@ var player2;
 var dead = false;
 var waitingTurns = 0;
 var enemyTurn = false;
+var monsterCanAttack = false;
 
 var attackText;
 var cureText;
@@ -31,6 +32,12 @@ var fireballText;
 var cureMageText;
 var cureWarriorText;
 var cancelText;
+
+var attractText;				
+var furyText;
+
+var player1HPText;
+var player2HPText;
 
 var playerClass;
 
@@ -51,12 +58,14 @@ var playerID;
 
 var textEnemyHP;
 
-var partnerCharacter;			
-var player2URL;
-var player2HP;
 var myCharacter;
 var player1URL;
 var player1HP;
+
+var partnerCharacter;			
+var player2URL;
+var player2HP;
+
 var classMage = false;
 
 var promiseLoad = new Promise(function(resolve, reject) {
@@ -467,70 +476,93 @@ function turns(){
 		if(dead)
 			return;
 		
-		if(waitingTurns > 0){
-			waitingTurns--;
-			socket.emit('passTurn');
-			return;
-		}
+		// if(waitingTurns > 0){
+		// 	waitingTurns--;
+		// 	socket.emit('passTurn');
+		// 	return;
+		// }
 		enemyTurn = false;
 		
 	});
 }
 
-function actionOnClickMage1 (text) {
+function actionOnClickMage1 () {
 
 	console.log("CLIQUEI Attack");
 	attack(1);
 }
 
-function actionOnClickMage2 (text) {
+function actionOnClickMage2 () {
 
 
     console.log("CLIQUEI Cure!");
 	buttonGroupMage.visible = false;
 	buttonGroupMage2.visible = true;
+
+	attackText.visible = false;		
+	cureText.visible = false;	
+	blessedLuckText.visible = false;		
+	fireballText.visible = false;	
+
+	cureMageText.visible = true;	
+	cureWarriorText.visible = true;			
+	cancelText.visible = true;	
+
+
 }
 
-function actionOnClickMage3 (text) {
+function actionOnClickMage3 () {
 
 
     console.log("CLIQUEI Blessed Luck!");
 }
 
-function actionOnClickMage4 (text) {
+function actionOnClickMage4 () {
 
     console.log("CLIQUEI Fireball!");
 }
 
-function cureMage (text) {
+function cureMage () {
 
     console.log("Curou Mage!");
+	attack(2);
+
 }
 
-function cureWarrior (text) {
+function cureWarrior () {
 
     console.log("Curou Warrior!");
+	attack(3);
 }
 
-function cancelAction (text) {
+function cancelAction () {
 
     console.log("CLIQUEI Cancel!");
 	buttonGroupMage.visible = true;
 	buttonGroupMage2.visible = false;
+
+	attackText.visible = true;		
+	cureText.visible = true;	
+	blessedLuckText.visible = true;		
+	fireballText.visible = true;	
+
+	cureMageText.visible = false;	
+	cureWarriorText.visible = false;			
+	cancelText.visible = false;	
 }
 
-function actionOnClickWarrior1 (text) {
+function actionOnClickWarrior1 () {
 	
 	console.log("CLIQUEI Attack");
 	attack(1);
 }
 	
-function actionOnClickWarrior2 (text) {
+function actionOnClickWarrior2 () {
 		
 	console.log("CLIQUEI Attract!");
 }
 	
-function actionOnClickWarrior3 (text) {
+function actionOnClickWarrior3 () {
 		
 	console.log("CLIQUEI Fury!");
 }
@@ -570,14 +602,20 @@ function createButtons(){
 		buttonGroupMage2.add(buttonCureWarrior);
 		buttonGroupMage2.add(buttonCancel);	
 
+		buttonGroupMage2.visible = false;
+
 		cureMageText = game.add.text(buttonCureMage.x + buttonCureMage.width/2, 145, 'Mage', {fontSize: '32px', fill: '#000'});
-		cureMageText.anchor.set(0.5);		
+		cureMageText.anchor.set(0.5);	
+		cureMageText.visible = false;	
 
 		cureWarriorText = game.add.text(buttonCureWarrior.x + buttonCureWarrior.width/2, 245, 'Warrior', {fontSize: '32px', fill: '#000'});
-		cureWarriorText.anchor.set(0.5);		
+		cureWarriorText.anchor.set(0.5);
+		cureWarriorText.visible = false;			
 
 		cancelText = game.add.text(buttonCancel.x + buttonCancel.width/2, 345, 'Cancel', {fontSize: '32px', fill: '#000'});
 		cancelText.anchor.set(0.5);
+		cancelText.visible = false;			
+
     }
 
     else {
@@ -608,8 +646,8 @@ function start() {
 		game.load.image('picture1', 'assets/loading.png');
 		
 		// getThings(firebase.auth().currentUser.uid);
-		playerReady();
 		socket.emit('getCharacter', firebase.auth().currentUser.uid);
+		playerReady();
 		
 		game.load.start();
 	
@@ -696,12 +734,19 @@ function attack(numberAttack){
 											});
 	
 	enemyTurn = true;
-	// if(numberAttack==3 && playerClass == "warrior"){
-	// 	socket.emit('dead', firebase.auth().currentUser.uid);
-	// 	$scope.waitingTurns = 2;
-	// }
+	if(numberAttack==3 && playerClass == "warrior"){
+		socket.emit('dead', playerID);
+		waitingTurns = 2;
+	}
 }
 
+function renderHP(){
+
+	player1HPText.visible = true;
+	player2HPText.visible = true;
+
+
+}
 
 function update() {
 
@@ -724,6 +769,7 @@ function update() {
 		socket.on('canRenderPlayers', function () {
 
 			if(playerClass == 'mage'){
+
 				var player1Sprite = game.add.sprite(600, 400,'mage');
 				player1Sprite.scale.setTo(0.25, 0.25);
 
@@ -731,7 +777,13 @@ function update() {
 				player2Sprite.scale.setTo(0.1, 0.1);
 
 				buttonGroupMage = game.add.group();
+				buttonGroupMage2 = game.add.group();
+				
+				// player1HPText.visible = true;
+				// player2HPText.visible = true;
 
+				// renderHP();
+				
 				createButtons();
 			}
 			else{
@@ -742,36 +794,43 @@ function update() {
 				player2Sprite.scale.setTo(0.25, 0.25);
 
 				buttonGroupWarrior = game.add.group();
-
+				
+				// player1HPText.visible = true;
+				// player2HPText.visible = true;
+				
 				createButtons();
-			}
+			}	
 			
-			
-			enemy.scale.set(0.5);
-			
-			textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
 		});
 
 		socket.on('sendCharacter', function (char) {
-		console.log('got char');
-		myCharacter = char;
-		player1URL = char.sprite;
-		player1HP = char.hp;
-		playerClass = char.class;
-		//$scope.player1Power = char.power;
-		if(char.class == "mage"){
-			classMage = true;
-		}
-			console.log(classMage);
-	});
+			console.log('got char');
+			myCharacter = char;
+			player1URL = char.sprite;
+			player1HP = char.hp;
+			playerClass = char.class;
 
-	socket.on('sendPartner', function (char) {
-		console.log('got partner');
-		partnerCharacter = char;			
-		player2URL = char.sprite;
-		player2HP = char.hp;
-		//$scope.player2Power = char.power;		
-	});
+			player1HPText = game.add.text(600, 300, 'HP:' + player1HP, { fill: '#ffffff' });	
+			player1HPText.visible = true;
+			
+			//$scope.player1Power = char.power;
+			if(char.class == "mage"){
+				classMage = true;
+			}
+			console.log(classMage);
+		});
+
+		socket.on('sendPartner', function (char) {
+			console.log('got partner');
+			partnerCharacter = char;			
+			player2URL = char.sprite;
+			player2HP = char.hp;
+
+			player2HPText = game.add.text(800, 300, 'HP:' + player2HP, { fill: '#ffffff' });
+			player2HPText.visible = true;
+
+			//$scope.player2Power = char.power;		
+		});
 	}
 
 	socket.on('enemyDamaged', function (hpMonster) {
@@ -781,15 +840,46 @@ function update() {
 		textEnemyHP.setText('HP Enemy: ' + enemyHP);			
 	});
 
-    if(cursors.left.isDown)
-    {
-  
-		player1.x--;
-    }
-    else if(cursors.right.isDown)
-    {
- 
-		player1.x++;
-    }
+	socket.on('healPlayer', function (playerInjured) {
+			if(playerInjured.uid == playerID){
+				console.log("PLAYER 1 HP: " + player1HP);				
+				player1HP = playerInjured.character.hp;
+			}
+			else {
+				console.log("PLAYER 2 HP: " + player2HP);
+				player2HP = playerInjured.character.hp;				
+			}
+	});
+
+	turns();
+
+	socket.on('playerDamaged', function (playerUID, damage) {
+		monsterCanAttack = true;
+		if(monsterCanAttack == true){
+			monsterCanAttack = false;
+			console.log("PLAYER UID É......... " + playerUID);
+			var mychar = myCharacter;
+			console.log("mychar USER ID IS ;;;;;;;;;;;  " + playerID);
+			if(playerUID == playerID){
+				console.log("PLAYER DAMAGED: " + playerClass);								
+				player1HP -= damage;
+				player1HP = Math.round(player1HP);	
+				player1HPText.setText('HP:' + player1HP);
+			
+			}
+			else {
+				console.log("PLAYER DAMAGED: " + partnerCharacter.class);				
+				player2HP -= damage;				
+				player2HP = Math.round(player2HP);	
+				player2HPText.setText('HP:' + player2HP);
+			
+			}
+			
+			if(player1HP <= 0){
+				socket.emit('dead', playerID);
+				dead = true;
+			}
+		}
+	});
 }
 
