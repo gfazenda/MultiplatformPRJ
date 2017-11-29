@@ -1,18 +1,7 @@
 //PHASER
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'phaserG', { preload: preload, create: create, update: update });
-var platforms;
 var player;
-var cursors;
-var score = 0;
-var scoreText;
 var enemies;
-var direction = "left";
-var gameOverText;
-var numberLifes;
-var lifeCounter;
-var invencible;
-var fireButton;
-var emitter;
 
 var dataBase;
 var players = [];
@@ -42,7 +31,7 @@ var player2HPText;
 var playerClass;
 
 var loadButton;
-
+var renderNumber = 0;
 var buttonGroupMage;
 var buttonGroupMage2;
 var buttonGroupWarrior;
@@ -67,6 +56,8 @@ var player2URL;
 var player2HP;
 
 var classMage = false;
+
+var currentMonster;
 
 var promiseLoad = new Promise(function(resolve, reject) {
 	// do a thing, possibly async, then…
@@ -328,74 +319,61 @@ function getPlayerNumUpdate() {
 	})
 }
 
-function getPlayerNumUpdate() { 
-	var playerNumUpdateRef = dataBase.ref('/Partidas');
-	playerNumUpdateRef.once('value', function(snapshot){
-		snapshot.forEach(function(x) {
-			//console.log(x.A.B)//x.A.B acessar o nivel B ou 2° do firebase???
-			playerNum = x.A.B;
-			//console.log('playerNum: ' + playerNum);
-			criaPartida(playerNum);
-			
-		});
-	})
-}
+// function getThings(uid) { 
 
-function getThings(uid) { 
+// 		// var personagemRef = dataBase.ref('/personagem');
+// 		personagemRef.once('value', function(snapshot){
+// 			snapshot.forEach(function(obj) {
+// 				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
+// 					//console.log('sending char found')
+// 					var existingCharacter = getCharacter(uid);
+// 					if(existingCharacter == null){
+// 					var newPlayer = new playerInfo(uid,obj.val());
+// 					players.push(newPlayer);
+// 						console.log('playerNum: ' + playerNum);
 
-		// var personagemRef = dataBase.ref('/personagem');
-		personagemRef.once('value', function(snapshot){
-			snapshot.forEach(function(obj) {
-				if(uid === obj.val().userId){//id do unuario igual ao id do usuario que esta no personagem
-					//console.log('sending char found')
-					var existingCharacter = getCharacter(uid);
-					if(existingCharacter == null){
-					var newPlayer = new playerInfo(uid,obj.val());
-					players.push(newPlayer);
-						console.log('playerNum: ' + playerNum);
-
-						if(playerNum % 2 == 0){
-							console.log('1° playerNum');
-						}else{
-							console.log('2° playerNum');
-						}
+// 						if(playerNum % 2 == 0){
+// 							console.log('1° playerNum');
+// 						}else{
+// 							console.log('2° playerNum');
+// 						}
 						
-                        if(players[0].character.class == "mage"){
+//                         if(players[0].character.class == "mage"){
 	
-                            playerClass = "mage";
-                            buttonGroupMage = game.add.group();
-							buttonGroupMage2 = game.add.group();
+//                             playerClass = "mage";
+//                             buttonGroupMage = game.add.group();
+// 							buttonGroupMage2 = game.add.group();
 
-                            // buttonGroupWarrior = game.add.group();
-
-   
-                            createButtons();
-                            // console.log("CLASSE AAAAA: " + playerClass);
-							LoadSpritesMage(playerNum % 2);
-                            console.log("pMage: "+ players[0].character.class);
-                        } else{
-
-                            playerClass = "warrior";
-                            // buttonGroupMage = game.add.group();
-
-                            buttonGroupWarrior = game.add.group();
+//                             // buttonGroupWarrior = game.add.group();
 
    
-                            createButtons();
-                            // console.log("CLASSE AAAAA: " + playerClass);
-							LoadSpritesWarrior(playerNum % 2);
-                            console.log("pWarrior: "+ players[0].character.class);
+//                             createButtons();
+//                             // console.log("CLASSE AAAAA: " + playerClass);
+// 							LoadSpritesMage(playerNum % 2);
+//                             console.log("pMage: "+ players[0].character.class);
+//                         } else{
+
+//                             playerClass = "warrior";
+//                             // buttonGroupMage = game.add.group();
+
+//                             buttonGroupWarrior = game.add.group();
+
+   
+//                             createButtons();
+//                             // console.log("CLASSE AAAAA: " + playerClass);
+// 							LoadSpritesWarrior(playerNum % 2);
+//                             console.log("pWarrior: "+ players[0].character.class);
 							
-                        }
+//                         }
 
-						// getNewEnemy();
-						playerReady();
+// 						// getNewEnemy();
+// 						playerReady();
                        
-				    }
-				}
-			});
-		})
-}
+// 				    }
+// 				}
+// 			});
+// 		})
+// }
 
 function playerReady(){
 
@@ -751,18 +729,30 @@ function renderHP(){
 function update() {
 }
 
-socket.on('getEnemy', function (inimigo) {
+socket.on('getEnemy', function (enemy, firstMonster) {
 	
 	console.log("got enemy");  
-	console.log(inimigo);  
-	
-	enemyURL = inimigo.sprite;
-	enemyHP = inimigo.hp;
-	enemyPower = inimigo.power;
-	var enemy = game.add.sprite(20, 300, inimigo.name);
-	enemy.scale.set(0.5);
-	
-	textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
+	console.log(enemy);  
+
+	if(enemyHP <=0){
+
+		currentMonster.destroy(); 
+		currentMonster = game.add.sprite(20, 300, enemy.name);		
+		currentMonster.scale.set(0.5);
+		
+		textEnemyHP.setText('HP Enemy: ' + enemyHP);
+	}
+	else{
+
+		currentMonster = game.add.sprite(20, 300, enemy.name);
+		currentMonster.scale.set(0.5);
+		
+		textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});
+	}
+		
+	enemyURL = enemy.sprite;
+	enemyHP = enemy.hp;
+	enemyPower = enemy.power;		
 });
 
 
@@ -842,7 +832,8 @@ socket.on('playerDamaged', function (playerUID, damage) {
 	});
 
 	socket.on('canRenderPlayers', function () {
-		
+		console.log('Rendering players ' + renderNumber + ' times.');
+		renderNumber++;
 					if(playerClass == 'mage'){
 		
 						var player1Sprite = game.add.sprite(600, 400,'mage');
@@ -876,5 +867,5 @@ socket.on('playerDamaged', function (playerUID, damage) {
 						createButtons();
 					}	
 					
-				});
+	});
 		
