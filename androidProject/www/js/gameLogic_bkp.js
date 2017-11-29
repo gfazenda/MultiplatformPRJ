@@ -471,20 +471,20 @@ function LoadSpritesMage(p1p2){
 	}
 }
 
-// function turns(){
+function turns(){
     socket.on('playersTurn', function () {
 		if(dead)
 			return;
 		
-		if(waitingTurns > 0){
-			waitingTurns--;
-			socket.emit('passTurn');
-			return;
-		}
+		// if(waitingTurns > 0){
+		// 	waitingTurns--;
+		// 	socket.emit('passTurn');
+		// 	return;
+		// }
 		enemyTurn = false;
 		
 	});
-// }
+}
 
 function actionOnClickMage1 () {
 
@@ -749,51 +749,97 @@ function renderHP(){
 }
 
 function update() {
-}
+	socket.emit('fuck');
+	return;
+	if(noEnemy == true){
+		noEnemy = false;
+		socket.on('getEnemy', function (inimigo) {
+			
+			console.log("got enemy");  
+			console.log(inimigo);  
+			
+			enemyURL = inimigo.sprite;
+			enemyHP = inimigo.hp;
+			enemyPower = inimigo.power;
+			var enemy = game.add.sprite(20, 300, inimigo.name);
+			enemy.scale.set(0.5);
+			
+			textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
+		});
 
-socket.on('getEnemy', function (inimigo) {
-	
-	console.log("got enemy");  
-	console.log(inimigo);  
-	
-	enemyURL = inimigo.sprite;
-	enemyHP = inimigo.hp;
-	enemyPower = inimigo.power;
-	var enemy = game.add.sprite(20, 300, inimigo.name);
-	enemy.scale.set(0.5);
-	
-	textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});			
-});
+		socket.on('canRenderPlayers', function () {
 
+			if(playerClass == 'mage'){
 
-socket.on('sendPartner', function (char) {
-	console.log('got partner');
-	partnerCharacter = char;			
-	player2URL = char.sprite;
-	player2HP = char.hp;
+				var player1Sprite = game.add.sprite(600, 400,'mage');
+				player1Sprite.scale.setTo(0.25, 0.25);
 
-	player2HPText = game.add.text(800, 300, 'HP:' + player2HP, { fill: '#ffffff' });
-	player2HPText.visible = true;
+				var player2Sprite = game.add.sprite(800, 410,'warrior');
+				player2Sprite.scale.setTo(0.1, 0.1);
 
-	//$scope.player2Power = char.power;		
-});
+				buttonGroupMage = game.add.group();
+				buttonGroupMage2 = game.add.group();
+				
+				// player1HPText.visible = true;
+				// player2HPText.visible = true;
 
-socket.on('sendCharacter', function (char) {
-	console.log('got char');
-	myCharacter = char;
-	player1URL = char.sprite;
-	player1HP = char.hp;
-	playerClass = char.class;
+				// renderHP();
+				
+				createButtons();
+			}
+			else{
+				var player1Sprite = game.add.sprite(600, 410, 'warrior');
+				player1Sprite.scale.setTo(0.1, 0.1);
 
-	player1HPText = game.add.text(600, 300, 'HP:' + player1HP, { fill: '#ffffff' });	
-	player1HPText.visible = true;
-	
-	//$scope.player1Power = char.power;
-	if(char.class == "mage"){
-		classMage = true;
+				var player2Sprite = game.add.sprite(800, 400,'mage');
+				player2Sprite.scale.setTo(0.25, 0.25);
+
+				buttonGroupWarrior = game.add.group();
+				
+				// player1HPText.visible = true;
+				// player2HPText.visible = true;
+				
+				createButtons();
+			}	
+			
+		});
+
+		socket.on('sendCharacter', function (char) {
+			console.log('got char');
+			myCharacter = char;
+			player1URL = char.sprite;
+			player1HP = char.hp;
+			playerClass = char.class;
+
+			player1HPText = game.add.text(600, 300, 'HP:' + player1HP, { fill: '#ffffff' });	
+			player1HPText.visible = true;
+			
+			//$scope.player1Power = char.power;
+			if(char.class == "mage"){
+				classMage = true;
+			}
+			console.log(classMage);
+		});
+
+		socket.on('sendPartner', function (char) {
+			console.log('got partner');
+			partnerCharacter = char;			
+			player2URL = char.sprite;
+			player2HP = char.hp;
+
+			player2HPText = game.add.text(800, 300, 'HP:' + player2HP, { fill: '#ffffff' });
+			player2HPText.visible = true;
+
+			//$scope.player2Power = char.power;		
+		});
 	}
-	console.log(classMage);
-});
+
+
+
+	turns();
+
+	
+}
 
 	socket.on('enemyDamaged', function (hpMonster) {
 		enemyHP = hpMonster;
@@ -841,40 +887,3 @@ socket.on('playerDamaged', function (playerUID, damage) {
 		}
 	});
 
-	socket.on('canRenderPlayers', function () {
-		
-					if(playerClass == 'mage'){
-		
-						var player1Sprite = game.add.sprite(600, 400,'mage');
-						player1Sprite.scale.setTo(0.25, 0.25);
-		
-						var player2Sprite = game.add.sprite(800, 410,'warrior');
-						player2Sprite.scale.setTo(0.1, 0.1);
-		
-						buttonGroupMage = game.add.group();
-						buttonGroupMage2 = game.add.group();
-						
-						// player1HPText.visible = true;
-						// player2HPText.visible = true;
-		
-						// renderHP();
-						
-						createButtons();
-					}
-					else{
-						var player1Sprite = game.add.sprite(600, 410, 'warrior');
-						player1Sprite.scale.setTo(0.1, 0.1);
-		
-						var player2Sprite = game.add.sprite(800, 400,'mage');
-						player2Sprite.scale.setTo(0.25, 0.25);
-		
-						buttonGroupWarrior = game.add.group();
-						
-						// player1HPText.visible = true;
-						// player2HPText.visible = true;
-						
-						createButtons();
-					}	
-					
-				});
-		
