@@ -739,7 +739,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 	enemyHP = enemy.hp;
 	enemyPower = enemy.power; 
 
-	if(enemyHP <=0){
+	if(!firstMonster){
 
 		currentMonster.destroy(); 
 		currentMonster = game.add.sprite(20, 300, enemy.name);		
