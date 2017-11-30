@@ -500,6 +500,7 @@ function actionOnClickMage3 () {
 function actionOnClickMage4 () {
 
     console.log("CLIQUEI Fireball!");
+	attack(5);
 }
 
 function cureMage () {
