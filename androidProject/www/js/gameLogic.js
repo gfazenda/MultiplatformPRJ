@@ -732,7 +732,11 @@ function update() {
 socket.on('getEnemy', function (enemy, firstMonster) {
 	
 	console.log("got enemy");  
-	console.log(enemy);  
+	console.log(enemy); 
+
+	enemyURL = enemy.sprite;
+	enemyHP = enemy.hp;
+	enemyPower = enemy.power; 
 
 	if(enemyHP <=0){
 
@@ -748,11 +752,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 		currentMonster.scale.set(0.5);
 		
 		textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});
-	}
-		
-	enemyURL = enemy.sprite;
-	enemyHP = enemy.hp;
-	enemyPower = enemy.power;		
+	}		
 });
 
 
