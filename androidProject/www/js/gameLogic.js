@@ -450,8 +450,60 @@ function LoadSpritesMage(p1p2){
 	}
 }
 
+function hideButtons(){
+
+	if(playerClass == "mage"){
+
+			buttonGroupMage.visible = false;
+			buttonGroupMage2.visible = false;
+
+			attackMageText.visible = false;		
+			cureText.visible = false;	
+			blessedLuckText.visible = false;		
+			fireballText.visible = false;	
+
+			cureMageText.visible = false;	
+			cureWarriorText.visible = false;			
+			cancelText.visible = false;	
+		}
+		else {
+
+			buttonGroupWarrior.visible = false;
+
+			attackWarriorText.visible = false;		
+			attractText.visible = false;	
+			furyText.visible = false;		
+
+		}
+}
+
 // function turns(){
     socket.on('playersTurn', function () {
+
+		if(playerClass == "mage"){
+
+			buttonGroupMage.visible = true;
+			buttonGroupMage2.visible = false;
+
+			attackMageText.visible = true;		
+			cureText.visible = true;	
+			blessedLuckText.visible = true;		
+			fireballText.visible = true;	
+
+			cureMageText.visible = false;	
+			cureWarriorText.visible = false;			
+			cancelText.visible = false;	
+		}
+		else {
+
+			buttonGroupWarrior.visible = true;
+
+			attackWarriorText.visible = true;		
+			attractText.visible = true;	
+			furyText.visible = true;		
+
+		}
+
 		if(dead)
 			return;
 		
@@ -469,6 +521,7 @@ function actionOnClickMage1 () {
 
 	console.log("CLIQUEI Attack");
 	attack(1);
+	hideButtons();
 }
 
 function actionOnClickMage2 () {
@@ -495,18 +548,21 @@ function actionOnClickMage3 () {
 
     console.log("CLIQUEI Blessed Luck!");
 	attack(4);
+	hideButtons();
 }
 
 function actionOnClickMage4 () {
 
     console.log("CLIQUEI Fireball!");
 	attack(5);
+	hideButtons();
 }
 
 function cureMage () {
 
     console.log("Curou Mage!");
 	attack(2);
+	hideButtons();
 
 }
 
@@ -514,6 +570,7 @@ function cureWarrior () {
 
     console.log("Curou Warrior!");
 	attack(3);
+	hideButtons();
 }
 
 function cancelAction () {
@@ -536,16 +593,21 @@ function actionOnClickWarrior1 () {
 	
 	console.log("CLIQUEI Attack");
 	attack(1);
+	hideButtons();
 }
 	
 function actionOnClickWarrior2 () {
 		
 	console.log("CLIQUEI Attract!");
+	attack(2);
+	hideButtons();
 }
 	
 function actionOnClickWarrior3 () {
 		
 	console.log("CLIQUEI Fury!");
+	attack(3);
+	hideButtons();
 }
 	
 function createButtons(){
