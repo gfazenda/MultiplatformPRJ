@@ -494,6 +494,7 @@ function actionOnClickMage3 () {
 
 
     console.log("CLIQUEI Blessed Luck!");
+	attack(4);
 }
 
 function actionOnClickMage4 () {
@@ -805,6 +806,13 @@ socket.on('sendCharacter', function (char) {
 				player2HP = playerInjured.character.hp;	
 				player2HPText.setText('HP:' + player2HP);
 				console.log("PLAYER 2 HP: " + player2HP);			
+			}
+	});
+
+	socket.on('blessedLuck', function(powerMonster, powerWarrior){
+			enemyPower = powerMonster;
+			if(!classMage){
+				myCharacter.power = powerWarrior;				
 			}
 	});
 
