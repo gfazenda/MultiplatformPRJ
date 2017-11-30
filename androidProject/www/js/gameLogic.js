@@ -796,10 +796,15 @@ socket.on('sendCharacter', function (char) {
 			if(playerInjured.uid == playerID){
 				console.log("PLAYER 1 HP: " + player1HP);				
 				player1HP = playerInjured.character.hp;
+				player1HPText.setText('HP:' + player1HP);
+
+				console.log("PLAYER 1 HP: " + player1HP);
 			}
 			else {
 				console.log("PLAYER 2 HP: " + player2HP);
-				player2HP = playerInjured.character.hp;				
+				player2HP = playerInjured.character.hp;	
+				player2HPText.setText('HP:' + player2HP);
+				console.log("PLAYER 2 HP: " + player2HP);			
 			}
 	});
 
