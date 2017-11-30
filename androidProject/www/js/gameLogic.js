@@ -494,7 +494,7 @@ function hideButtons(){
 			cureWarriorText.visible = false;			
 			cancelText.visible = false;	
 		}
-		else {
+		else if(playerClass == "warrior" && waitingTurns == 0){
 
 			buttonGroupWarrior.visible = true;
 
@@ -778,7 +778,7 @@ function attack(numberAttack){
 	
 	enemyTurn = true;
 	if(numberAttack==3 && playerClass == "warrior"){
-		socket.emit('dead', playerID);
+		// socket.emit('dead', playerID);
 		waitingTurns = 2;
 	}
 }
