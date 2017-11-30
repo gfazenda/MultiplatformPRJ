@@ -14,7 +14,7 @@ var waitingTurns = 0;
 var enemyTurn = false;
 var monsterCanAttack = false;
 
-var attackText;
+var attackMageText;
 var cureText;
 var blessedLuckText;
 var fireballText;
@@ -22,6 +22,7 @@ var cureMageText;
 var cureWarriorText;
 var cancelText;
 
+var attackWarriorText;
 var attractText;				
 var furyText;
 
@@ -477,7 +478,7 @@ function actionOnClickMage2 () {
 	buttonGroupMage.visible = false;
 	buttonGroupMage2.visible = true;
 
-	attackText.visible = false;		
+	attackMageText.visible = false;		
 	cureText.visible = false;	
 	blessedLuckText.visible = false;		
 	fireballText.visible = false;	
@@ -519,7 +520,7 @@ function cancelAction () {
 	buttonGroupMage.visible = true;
 	buttonGroupMage2.visible = false;
 
-	attackText.visible = true;		
+	attackMageText.visible = true;		
 	cureText.visible = true;	
 	blessedLuckText.visible = true;		
 	fireballText.visible = true;	
@@ -550,18 +551,18 @@ function createButtons(){
     if(playerClass == "mage"){
 
 
-        var buttonAttack = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickMage1, this, 2, 1, 0);
+        var buttonAttackMage = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickMage1, this, 2, 1, 0);
 		var buttonCure = game.make.button(game.world.centerX + 300, 200, 'button', actionOnClickMage2, this, 2, 1, 0);
 		var buttonBlessedLuck = game.make.button(game.world.centerX + 300, 300, 'button', actionOnClickMage3, this, 2, 1, 0);
         var buttonFireball = game.make.button(game.world.centerX + 300, 400, 'button', actionOnClickMage4, this, 2, 1, 0);		
 
-        buttonGroupMage.add(buttonAttack);
+        buttonGroupMage.add(buttonAttackMage);
 		buttonGroupMage.add(buttonCure);
 		buttonGroupMage.add(buttonBlessedLuck);
 		buttonGroupMage.add(buttonFireball);
 
-		attackText = game.add.text(buttonAttack.x + buttonAttack.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
-		attackText.anchor.set(0.5);		
+		attackMageText = game.add.text(buttonAttackMage.x + buttonAttackMage.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
+		attackMageText.anchor.set(0.5);		
 
 		cureText = game.add.text(buttonCure.x + buttonCure.width/2, 245, 'Cure', {fontSize: '32px', fill: '#000'});
 		cureText.anchor.set(0.5);		
@@ -598,16 +599,16 @@ function createButtons(){
 
     else {
         
-        var buttonAttack = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickWarrior1, this, 2, 1, 0);		
+        var buttonAttackWarrior = game.make.button(game.world.centerX + 300, 100, 'button', actionOnClickWarrior1, this, 2, 1, 0);		
 		var buttonAttract = game.make.button(game.world.centerX + 300, 200, 'button', actionOnClickWarrior2, this, 2, 1, 0);
 		var buttonFury = game.make.button(game.world.centerX + 300, 300, 'button', actionOnClickWarrior3, this, 2, 1, 0);		
 
-        buttonGroupWarrior.add(buttonAttack);
+        buttonGroupWarrior.add(buttonAttackWarrior);
 		buttonGroupWarrior.add(buttonAttract);
 		buttonGroupWarrior.add(buttonFury);
 
-		attackText = game.add.text(buttonAttack.x + buttonAttack.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
-		attackText.anchor.set(0.5);		
+		attackWarriorText = game.add.text(buttonAttackWarrior.x + buttonAttackWarrior.width/2, 145, 'Attack', {fontSize: '32px', fill: '#000'});
+		attackWarriorText.anchor.set(0.5);		
 		
 		attractText = game.add.text(buttonAttract.x + buttonAttract.width/2, 245, 'Attract', {fontSize: '32px', fill: '#000'});
 		attractText.anchor.set(0.5);		
