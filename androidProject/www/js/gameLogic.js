@@ -2,7 +2,9 @@
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'phaserG', { preload: preload, create: create, update: update });
 var player;
 var enemies;
-
+var myHealthBar;
+var partnerHealthBar;
+var enemyHealthBar;
 var dataBase;
 var players = [];
 
@@ -41,6 +43,7 @@ var criarButton = true;
 
 var enemyURL;
 var enemyHP;
+var enemyHPMax;
 var enemyPower;
 var noEnemy = true;
 
@@ -51,10 +54,12 @@ var textEnemyHP;
 var myCharacter;
 var player1URL;
 var player1HP;
+var player1HPMax;
 
 var partnerCharacter;			
 var player2URL;
 var player2HP;
+var player2HPMax;
 
 var classMage = false;
 
@@ -740,8 +745,47 @@ function loadComplete() {
 
 function create() {
 
+	
+
 	var sky = game.add.sprite(0, 0, 'sky');
 	sky.scale.set(0.68);
+
+	var myBarConfig = {
+		width: 100,
+		height: 20,
+		x: 650, 
+		y: 380, 
+		bg: {
+			color: '#6A706C'},
+	  	bar: {
+			color: '#23A229'}
+	};
+
+	var partnerBarConfig = {
+		width: 100,
+		height: 20,
+		x: 850, 
+		y: 380, 
+		bg: {
+			color: '#6A706C'},
+	  	bar: {
+			color: '#23A229'}
+	};
+
+	var enemyBarConfig = {
+		width: 250,
+		height: 40,
+		x: 180, 
+		y: 240, 
+		bg: {
+			color: '#6A706C'},
+	  	bar: {
+			color: '#23A229'}
+	};
+
+	myHealthBar = new HealthBar(this.game, myBarConfig);
+	partnerHealthBar = new HealthBar(this.game, partnerBarConfig);	
+	enemyHealthBar = new HealthBar(this.game, enemyBarConfig);
 
 	//LOAD STATES
 	game.load.onLoadStart.add(loadStart, this);
@@ -791,7 +835,16 @@ function renderHP(){
 
 }
 
-function update() {
+function verifyHP(){
+
+	myHealthBar.setPercent((player1HP/player1HPMax) * 100);
+	partnerHealthBar.setPercent((player2HP/player2HPMax) * 100);	
+	enemyHealthBar.setPercent((enemyHP/enemyHPMax) * 100);
+}
+
+function update() {	
+
+	verifyHP();
 }
 
 socket.on('getEnemy', function (enemy, firstMonster) {
@@ -801,6 +854,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 
 	enemyURL = enemy.sprite;
 	enemyHP = enemy.hp;
+	enemyHPMax - enemy.hpMax;
 	enemyPower = enemy.power; 
 
 	if(!firstMonster){
@@ -809,14 +863,14 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 		currentMonster = game.add.sprite(20, 300, enemy.name);		
 		currentMonster.scale.set(0.5);
 		
-		textEnemyHP.setText('HP Enemy: ' + enemyHP);
+		textEnemyHP.setText('HP : ' + enemyHP);
 	}
 	else{
 
 		currentMonster = game.add.sprite(20, 300, enemy.name);
 		currentMonster.scale.set(0.5);
-		
-		textEnemyHP = game.add.text(game.world.centerX - 600, 200, 'HP Enemy: ' + enemyHP, {fontSize: '32px', fill: '#000'});
+
+		textEnemyHP = game.add.text(game.world.centerX - 580, 225, 'HP : ' + enemyHP, {fontSize: '32px', fill: '#ffffff'});
 	}		
 });
 
@@ -826,8 +880,9 @@ socket.on('sendPartner', function (char) {
 	partnerCharacter = char;			
 	player2URL = char.sprite;
 	player2HP = char.hp;
+	player2HPMax = char.hpMax;
 
-	player2HPText = game.add.text(800, 300, 'HP:' + player2HP, { fill: '#ffffff' });
+	player2HPText = game.add.text(801, 369, 'HP : ' + player2HP, { font: "20px Roboto", fill: '#ffffff' });
 	player2HPText.visible = true;
 
 	//$scope.player2Power = char.power;		
@@ -838,9 +893,10 @@ socket.on('sendCharacter', function (char) {
 	myCharacter = char;
 	player1URL = char.sprite;
 	player1HP = char.hp;
+	player1HPMax = char.hpMax;
 	playerClass = char.class;
 
-	player1HPText = game.add.text(600, 300, 'HP:' + player1HP, { fill: '#ffffff' });	
+	player1HPText = game.add.text(601, 369, 'HP : ' + player1HP, { font: "20px Roboto", fill: '#ffffff' });	
 	player1HPText.visible = true;
 	
 	//$scope.player1Power = char.power;
@@ -853,7 +909,7 @@ socket.on('sendCharacter', function (char) {
 	socket.on('enemyDamaged', function (hpMonster) {
 		enemyHP = hpMonster;
 		console.log("ENEMYHP IS: " + enemyHP);
-		textEnemyHP.setText('HP Enemy: ' + enemyHP);			
+		textEnemyHP.setText('HP : ' + enemyHP);			
 	});
 
 	socket.on('healPlayer', function (playerInjured) {
