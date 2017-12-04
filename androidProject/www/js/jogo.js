@@ -142,7 +142,7 @@ angular.module('myJogo', []).controller('jogo', function ($scope, $http, $timeou
 	}
 	
 	socket.on('gameOver', function(){
-		window.location.href = '/inicio.html';
+		window.location.href = 'inicio.html';
 	});
 
 	socket.on('actionText', function(text, player = true){

@@ -43,7 +43,7 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 
 					})
 					.then(function(){
-						window.location.href = '/inicio.html'; 
+						window.location.href = 'inicio.html'; 
 						
 					})
 					.catch(function(error){
@@ -106,7 +106,7 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 
 	$scope.voltar = function(){
 
-		window.location.href = '/inicio.html'; 
+		window.location.href = 'inicio.html'; 
 		//document.getElementById('google-pic').setAttribute('src', '');
 
 	}
