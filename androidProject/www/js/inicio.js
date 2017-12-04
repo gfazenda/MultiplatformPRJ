@@ -158,7 +158,7 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 							enviarNome(nomeJogador);
 						}else{
 							//console.log("jogador sem personagem ");
-							window.location.href = "/personagem.html";//redireciona para a criação de personagem;
+							window.location.href = "personagem.html";//redireciona para a criação de personagem;
 						}
 						
 						//--------------------------------------------------------/\
@@ -190,7 +190,7 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 
 			firebase.auth().onAuthStateChanged(function(user){
 				if(user){//logado
-					window.location.href = '/jogo.html';
+					window.location.href = 'jogo.html';
 					console.log("FIREBASE USER UID: " + firebase.auth().currentUser.uid);					
 				}else{//nao logado
 					//window.location.href = '/'; 

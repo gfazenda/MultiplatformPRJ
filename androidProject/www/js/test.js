@@ -28,7 +28,7 @@ function myTest() {
 }
 
 function GoLogIn() {
-   window.location.href = '/home.html'; 
+   window.location.href = 'home.html'; 
 }
 
 socket.on('hellohello', (char) => {
