@@ -8,6 +8,12 @@ var enemyHealthBar;
 var dataBase;
 var players = [];
 
+var loadImage;
+
+var actionText;
+var actionPlayerUI;
+var actionEnemyUI;
+
 var player1;
 var player2;
 
@@ -414,6 +420,9 @@ function preload() {
     game.load.image('mage', 'assets/blackMage.png');
     game.load.image('warrior', 'assets/warrior.png');
 	game.load.spritesheet('button', 'assets/button.png', 297, 87);
+	game.load.image('actionPlayerUI', 'assets/actionPlayerUI.png');
+	game.load.image('actionEnemyUI', 'assets/actionEnemyUI.png');
+
 	
 	game.load.image('enemy1', 'assets/enemy1.png');	
 	game.load.image('enemy2', 'assets/enemy2.png');	
@@ -691,7 +700,7 @@ function createButtons(){
 
 function start() {
 	
-		game.load.image('picture1', 'assets/loading.png');
+		loadImage = game.load.image('picture1', 'assets/loading.png');
 		
 		// getThings(firebase.auth().currentUser.uid);
 		socket.emit('getCharacter', firebase.auth().currentUser.uid);
@@ -740,6 +749,10 @@ function loadComplete() {
 	// console.log("LOAD START(): " + firebase.auth().currentUser.uid)
 	
 	loadText.setText("Load Complete");
+	loadText.destroy();
+	loadImage.visible = false;
+	loadImage.destroy();
+	loadImage = '';
 }
 
 
@@ -794,6 +807,18 @@ function create() {
 
 	loadButton = game.add.button(game.world.centerX - 100, 600, 'button', start, this, 2, 1, 0);
 	loadText = game.add.text(game.world.centerX, 630, 'Ready!', { fill: '#ffffff' });	
+
+	actionPlayerUI = game.add.sprite(game.world.centerX, 30, 'actionPlayerUI');
+	actionPlayerUI.anchor.set(0.5);
+	actionPlayerUI.visible = false;
+
+	actionEnemyUI = game.add.sprite(game.world.centerX, 30, 'actionEnemyUI');
+	actionEnemyUI.anchor.set(0.5);
+	actionEnemyUI.visible = false;
+
+	actionText = game.add.text(game.world.centerX, 30, '', { fill: '#ffffff' });
+	actionText.anchor.set(0.5);
+	actionText.visible = false;	
 	
 
     //  We're going to be using physics, so enable the Arcade Physics system
@@ -854,7 +879,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 
 	enemyURL = enemy.sprite;
 	enemyHP = enemy.hp;
-	enemyHPMax - enemy.hpMax;
+	enemyHPMax = enemy.hpMax;
 	enemyPower = enemy.power; 
 
 	if(!firstMonster){
@@ -874,6 +899,47 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 	}		
 });
 
+socket.on('actionText', function(text, player = true){
+
+	actionText.setText(text);
+	actionText.visible = true;
+
+	if(player){
+
+		actionPlayerUI.visible = true;	
+
+		setTimeout(function(){
+			actionText.visible = false;
+			actionPlayerUI.visible = false;
+		}, 2000);
+	}
+	else {
+
+		actionEnemyUI.visible = true;	
+
+		setTimeout(function(){
+			actionText.visible = false;
+			actionEnemyUI.visible = false;
+		}, 2000);
+	}
+		// $timeout.cancel($scope.promise);
+		// $scope.actionText = text;
+		// var delay = 2000;
+		// if(player){
+		// 	$scope.showActionText = true;
+		// }else{
+		// 	$scope.showActionTextMonster = true;
+		// 	delay = 1500;
+		// }
+		// $scope.promise =
+		// $timeout(function(){
+		// 	$scope.showActionText = false;	
+		// 	$scope.showActionTextMonster = false;
+		// 	console.log("showActionText: " + $scope.showActionText);		
+		// }, delay);
+		// console.log("showActionText: " + $scope.showActionText);
+		//$scope.showActionText = false;
+	});
 
 socket.on('sendPartner', function (char) {
 	console.log('got partner');
@@ -907,9 +973,12 @@ socket.on('sendCharacter', function (char) {
 });
 
 	socket.on('enemyDamaged', function (hpMonster) {
+		// actionText.visible = false;
+		// actionPlayerUI.visible = false;
 		enemyHP = hpMonster;
 		console.log("ENEMYHP IS: " + enemyHP);
-		textEnemyHP.setText('HP : ' + enemyHP);			
+		textEnemyHP.setText('HP : ' + enemyHP);	
+		
 	});
 
 	socket.on('healPlayer', function (playerInjured) {
