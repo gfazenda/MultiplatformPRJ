@@ -14,8 +14,13 @@ var actionText;
 var actionPlayerUI;
 var actionEnemyUI;
 
+var damageText;
+
 var player1;
 var player2;
+
+var player1Sprite;
+var player2Sprite;
 
 var dead = false;
 var waitingTurns = 0;
@@ -47,7 +52,7 @@ var buttonGroupWarrior;
 
 var criarButton = true;
 
-var enemyURL;
+var enemySprite;
 var enemyHP;
 var enemyHPMax;
 var enemyPower;
@@ -820,6 +825,14 @@ function create() {
 	actionText.anchor.set(0.5);
 	actionText.visible = false;	
 	
+	damageText = game.add.text(game.world.centerX, game.world.centerY, '0', { font: '45px Roboto', fill: '#ffffff' });	
+	actionText.anchor.set(0.5);
+	damageText.visible = false;
+
+	// game.add.tween(player1Sprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
+	// game.add.tween(player2Sprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
+	// game.add.tween(enemySprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
+
 
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -877,7 +890,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 	console.log("got enemy");  
 	console.log(enemy); 
 
-	enemyURL = enemy.sprite;
+	enemySprite = enemy.sprite;
 	enemyHP = enemy.hp;
 	enemyHPMax = enemy.hpMax;
 	enemyPower = enemy.power; 
@@ -972,12 +985,29 @@ socket.on('sendCharacter', function (char) {
 	console.log(classMage);
 });
 
-	socket.on('enemyDamaged', function (hpMonster) {
+	socket.on('enemyDamaged', function (hpMonster, damageToMonster) {
 		// actionText.visible = false;
 		// actionPlayerUI.visible = false;
 		enemyHP = hpMonster;
 		console.log("ENEMYHP IS: " + enemyHP);
 		textEnemyHP.setText('HP : ' + enemyHP);	
+
+		damageText.setText(damageToMonster);
+		damageText.x = 300;
+		damageText.y = 300;
+		damageText.visible = true;
+
+		// Tween.start();
+
+		setTimeout(function(){
+			damageText.visible = false;
+			// Tween.stop();
+		}, 2000);
+		
+	});
+
+	socket.on('enemyDamaged', function (hpMonster) {
+		
 		
 	});
 
@@ -1016,6 +1046,18 @@ socket.on('playerDamaged', function (playerUID, damage) {
 				player1HP -= damage;
 				player1HP = Math.round(player1HP);	
 				player1HPText.setText('HP:' + player1HP);
+
+				damageText.setText(damage);
+				damageText.x = player1Sprite.x - 25;
+				damageText.y = player1Sprite.y;
+				damageText.visible = true;
+
+				// Tween.start();
+
+				setTimeout(function(){
+					damageText.visible = false;
+					// Tween.stop();
+				}, 2000);
 			
 			}
 			else {
@@ -1023,6 +1065,18 @@ socket.on('playerDamaged', function (playerUID, damage) {
 				player2HP -= damage;				
 				player2HP = Math.round(player2HP);	
 				player2HPText.setText('HP:' + player2HP);
+
+				damageText.setText(damage);
+				damageText.x = player2Sprite.x - 25;
+				damageText.y = player2Sprite.y;
+				damageText.visible = true;
+
+				// Tween.start();
+
+				setTimeout(function(){
+					damageText.visible = false;
+					// Tween.stop();
+				}, 2000);
 			
 			}
 			
@@ -1038,11 +1092,13 @@ socket.on('playerDamaged', function (playerUID, damage) {
 		renderNumber++;
 					if(playerClass == 'mage'){
 		
-						var player1Sprite = game.add.sprite(600, 400,'mage');
+						player1Sprite = game.add.sprite(600, 400,'mage');
 						player1Sprite.scale.setTo(0.25, 0.25);
+						player1Sprite.alpha = 1;
 		
-						var player2Sprite = game.add.sprite(800, 410,'warrior');
+						player2Sprite = game.add.sprite(800, 410,'warrior');
 						player2Sprite.scale.setTo(0.1, 0.1);
+						player2Sprite.alpha = 1;
 		
 						buttonGroupMage = game.add.group();
 						buttonGroupMage2 = game.add.group();
@@ -1055,11 +1111,13 @@ socket.on('playerDamaged', function (playerUID, damage) {
 						createButtons();
 					}
 					else{
-						var player1Sprite = game.add.sprite(600, 410, 'warrior');
+						player1Sprite = game.add.sprite(600, 410, 'warrior');
 						player1Sprite.scale.setTo(0.1, 0.1);
+						player1Sprite.alpha = 1;
 		
-						var player2Sprite = game.add.sprite(800, 400,'mage');
+						player2Sprite = game.add.sprite(800, 400,'mage');
 						player2Sprite.scale.setTo(0.25, 0.25);
+						player2Sprite.alpha = 1;
 		
 						buttonGroupWarrior = game.add.group();
 						
