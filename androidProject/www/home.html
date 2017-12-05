@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
 		<script src="http://code.angularjs.org/1.3.0/angular-route.js"></script>
-   
+		<script src="https://apis.google.com/js/platform.js" async defer></script>
 		
 		<script>
             // Initialize Firebase
@@ -22,8 +22,9 @@
             firebase.initializeApp(config);
             
         </script>
-
+		<meta name="google-signin-client_id" content="418193430362-983qteuu6fjrjkes9gd45cmga18mlulj.apps.googleusercontent.com">
 		<script src="http://multiplataforma-gb-gabrielfazenda.c9users.io/socket.io/socket.io.js"></script>
+		<script src="lib/ionic-native/dist/ionic.native.js"></script>
 
 	</head>
 	
@@ -41,7 +42,7 @@
 			</button>
 			
 		</div>
-		
+		<div class="g-signin2" data-onsuccess="onSignIn"></div>
 		<!-- <div id="personagem" ng-app="myPersonagem" ng-controller="personagem"> -->
 			
 			<!-- <p>Add Char: <input id="addChar"  /></p> -->
