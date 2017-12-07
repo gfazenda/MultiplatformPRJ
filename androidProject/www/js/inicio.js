@@ -2,6 +2,14 @@
 angular.module('myIni', []).controller('ini', function ($scope, $http) {
 
 	//socket----------------------------------------------------------------------------------
+	$scope.getUID = function() {
+		if(navigator.platform == 'Linux aarch64'){ //android
+			return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
+		}
+		else{
+			return firebase.auth().currentUser.uid;
+		}
+	}
 
 	var canPlay = false;
 
@@ -30,9 +38,13 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 
 	//recupera dados-----------------------------------------------------------\/
 	$scope.entrarFila = function(jogadores) {
-		
-		socket.emit('userOnServer', {name: $scope.personagemJgador.name,
-									uid: $scope.personagemJgador.userId
+		if($scope.personagemJgador == undefined){
+			console.log('checkng it')
+			$scope.existePersonagem();
+		}
+		socket.emit('userOnServer', {name: 'LOLOLOL',
+			// $scope.personagemJgador.name,
+									uid: $scope.getUID()
 									});
 	}
 	
@@ -75,13 +87,16 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 		var personagemRef = dataBase.ref('/personagem');
 		var nomePersonagem;
 		var idUsuario;
-
+		console.log('compar222e')
 		personagemRef.once('value', function(snapshot){
-			
+			console.log('compar555e')
 			//console.log(snapshot.val());
 			snapshot.forEach(function(id) {
 				idUsuario = id.val();
-				if(idUsuario.userId === firebase.auth().currentUser.uid){//id do unuario igual ao id do usuario que esta no personagem
+				console.log('compare')
+				console.log(getUID())
+				console.log(idUsuario.userId);
+				if(idUsuario.userId === $scope.getUID()){//id do unuario igual ao id do usuario que esta no personagem
 					//tem personagem
 					$scope.personagemJgador = id.val();
 					//console.log("personagemJgador "+$scope.personagemJgador.nome);
@@ -93,7 +108,8 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 	}
 	$scope.nome = "nada"
 	$scope.checkIfLoggedIn = function(){
-		
+		$scope.existePersonagem();
+		// return;
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
 				$scope.existePersonagem();
@@ -114,7 +130,7 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 				document.getElementById('signOut').setAttribute('style', 'display: inline-block', 'visibility: hidden');
 
 			}else{//nao logado
-				window.location.href = '/'; 
+				// window.location.href = '/'; 
 				
 			}
 			
@@ -181,17 +197,17 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 	
 	
 	$scope.jogar = function(){
-		if(document.getElementById(firebase.auth().currentUser.uid)){//faz o jogador ter que entrar na fila par jogar
+		if(document.getElementById($scope.getUID())){//faz o jogador ter que entrar na fila par jogar
 			//window.location.href = '/jogo'; 
-			console.log("FIREBASE USER UID: " + firebase.auth().currentUser.uid);
+			console.log("FIREBASE USER UID: " + $scope.getUID());
 			console.log("canPlay: " + canPlay);
 			canPlay = true;
 			console.log("canPlay: " + canPlay);
-
+			window.location.href = 'jogo.html';
 			firebase.auth().onAuthStateChanged(function(user){
 				if(user){//logado
 					window.location.href = 'jogo.html';
-					console.log("FIREBASE USER UID: " + firebase.auth().currentUser.uid);					
+					console.log("FIREBASE USER UID: " + $scope.getUID());					
 				}else{//nao logado
 					//window.location.href = '/'; 
 				}

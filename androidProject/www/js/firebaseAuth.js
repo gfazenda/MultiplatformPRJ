@@ -1,8 +1,11 @@
 angular.module('myApp', []).controller('Game', function ($scope, $http) {
 
 	//$scope.existePersonagem();
-	
+	$scope.showFields = false;
 	$scope.checkIfLoggedIn = function(){
+		if(navigator.platform == 'Linux aarch64'){ //android
+			window.location.href = 'inicio.html'; 
+		}
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
 				window.location.href = 'inicio.html'; 
@@ -29,8 +32,14 @@ angular.module('myApp', []).controller('Game', function ($scope, $http) {
 		$scope.checkIfLoggedIn();
 	}
 					
-	$scope.signInWithGoogle = function(){	
-		
+	$scope.signInWithGoogle = function(){
+		console.log(navigator.platform)	
+		if(navigator.platform == 'Linux aarch64'){ //android
+			console.log('got you')
+			$scope.checkIfLoggedIn();
+			$scope.showFields = true;
+		}else{
+			$scope.showFields = true;
 		var googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 
 		firebase.auth().signInWithPopup(googleAuthProvider).then(function(data){
@@ -40,6 +49,7 @@ angular.module('myApp', []).controller('Game', function ($scope, $http) {
 		.catch(function(error){
 			console.log("erro"+error);
 		})
+	}
 	}
 
 });

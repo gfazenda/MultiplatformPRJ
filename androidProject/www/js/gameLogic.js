@@ -1,5 +1,5 @@
 //PHASER
-var game = new Phaser.Game(1280, 720, Phaser.AUTO, 'phaserG', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'phaserG', { preload: preload, create: create, update: update });
 var player;
 var enemies;
 var myHealthBar;
@@ -140,7 +140,7 @@ firebase.initializeApp(config);
 
 // $scope.getMyCharacter = function() {
 // 		console.log('getting char');
-// 		socket.emit('getCharacter', firebase.auth().currentUser.uid);
+// 		socket.emit('getCharacter', getUID());
 		
 // }
         
@@ -225,7 +225,7 @@ function matchs(PUID){
 					console.log("Iguais");
 
 				}else{
-					newMatch(firebase.auth().currentUser.uid);//cadastra players na partida
+					newMatch(getUID());//cadastra players na partida
 					
 				}
 				contKey++;
@@ -420,7 +420,7 @@ function preload() {
 
 	Initialize();
   
-    game.load.image('sky', '/assets/background.jpg');
+    game.load.image('sky', 'assets/background.jpg');
 
     game.load.image('mage', 'assets/blackMage.png');
     game.load.image('warrior', 'assets/warrior.png');
@@ -705,12 +705,21 @@ function createButtons(){
     console.log("CLASSE: " + playerClass);
 }
 
+function getUID(){
+	if(navigator.platform == 'Linux aarch64'){ //android
+		return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
+	}
+	else{
+		return firebase.auth().currentUser.uid;
+	}
+}
+
 function start() {
 	
 		// loadImage = game.load.image('picture1', 'assets/loading.png');
 		
-		// getThings(firebase.auth().currentUser.uid);
-		socket.emit('getCharacter', firebase.auth().currentUser.uid);
+		// getThings(getUID());
+		socket.emit('getCharacter', getUID());
 		playerReady();
 		
 		game.load.start();
@@ -723,9 +732,9 @@ function start() {
 function loadStart() {
 	
 	// loadText.setText("Loading ...");
-	console.log("LOAD START(): " + firebase.auth().currentUser.uid)
-	playerID = firebase.auth().currentUser.uid;
-	loadText.setText(firebase.auth().currentUser.uid);
+	console.log("LOAD START(): " + getUID())
+	playerID = getUID();
+	loadText.setText(getUID());
 
 	
 }
@@ -753,7 +762,7 @@ function fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
 }
 	
 function loadComplete() {
-	// console.log("LOAD START(): " + firebase.auth().currentUser.uid)
+	// console.log("LOAD START(): " + getUID())
 	
 	loadText.setText("Load Complete");
 	loadText.destroy();
@@ -846,10 +855,10 @@ function create() {
 // 	getPlayerNumUpdate();
 // 	//criaPartida(2);
 
-// 	matchs(firebase.auth().currentUser.uid);//cadastra players na partida
+// 	matchs(getUID());//cadastra players na partida
 
 
-// 	console.log("USER DESS M*: " + firebase.auth().currentUser.uid);
+// 	console.log("USER DESS M*: " + getUID());
 // }
 
 function attack(numberAttack){

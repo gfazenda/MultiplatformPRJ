@@ -12,16 +12,25 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 		// chat.innerHTML += msg;
 	// });
 	
-	
+	function getUID(){
+		if(navigator.platform == 'Linux aarch64'){ //android
+			return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
+		}
+		else{
+			return firebase.auth().currentUser.uid;
+		}
+	}
 	
 	$scope.criaPersonagem = function(escolhaClass){
 		//escolhaClass é o numero da classe. 0 para warrior e 1 para mago
 		
 		var charInputName = document.getElementById('addChar');
+		var userPW = document.getElementById('userpw');
 		var charName = charInputName.value;
 		charInputName.value = '';
-
-		if(charName !== "" ){
+		console.log('the user')
+		console.log(firebase.auth().currentUser)
+		if(charName !== "" && userPW.value !== ""){
 			if(charName.length >= parseInt(4)){
 				if(escolhaClass){
 					//console.log("pass");
@@ -39,8 +48,9 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 						name: charName,
 						sprite: $scope.persoagem[escolhaClass-1].sprite,
 						xp: $scope.persoagem[escolhaClass-1].xp,
-						userId: firebase.auth().currentUser.uid
-
+						userId: getUID(),
+						// email: firebase.auth().currentUser.email,
+						password: userPW.value
 					})
 					.then(function(){
 						window.location.href = 'inicio.html'; 
