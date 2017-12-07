@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koreez/phaser-particle-editor-plugin": "^1.0.0-alpha.16",
     "body-parser": "^1.18.1",
     "cookie-parser": "^1.4.3",
     "ejs": "^2.5.7",

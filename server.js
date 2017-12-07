@@ -58,7 +58,11 @@ app.use(expressSession({
 // 		var sessionID = data.signedCookies[KEY];
 // 		store.get(sessionID, function(err, session) {
 // 			if (err || !session) {
+<<<<<<< HEAD
 // 				return next(new Error('Acesso negado! ' + err + session));
+=======
+// 				return next(new Error('Acesso negado!'));
+>>>>>>> Matheus-Phaser
 // 			} else {
 // 				socket.handshake.session = session;
 // 				return next();
@@ -141,7 +145,11 @@ var turnCount = 0; //se = 2, monstro ataca
 var usedAttract = false;
 var userAttractedUid;
 var enemyBurned = false;
+<<<<<<< HEAD
 var monsterDamageLimit = 7;
+=======
+var playersReady = 0;
+>>>>>>> Matheus-Phaser
 
 healPlayer = function(mage, className){
 
@@ -192,7 +200,8 @@ attackMage = function(mage, numberAttack){
 	// 4 - Corta o dano do inimigo em X% / Aumenta dano do cavaleiro em X%
 	// 5 - Bola de fogo (queima inimigo, dano por turno)
 	
-	var damage = mage.power;
+	var mageChar = getCharacter(mage);
+	var damage = mageChar.power;
 
 	switch(numberAttack){
 			
@@ -277,7 +286,7 @@ damageMonster = function(damage){
 	
 }
 
-getNewEnemy = function(damage){
+getNewEnemy = function(){
 	var enemiesRef = dataBase.ref('/enemiesSprite');
 	
 	//getRandomEnemy() - > retorna o nome do iimigo
@@ -286,8 +295,17 @@ getNewEnemy = function(damage){
 		snapshot.forEach(function(enemy){
 			if(enemy.val().name == nameEnemy){
 				currentMonster = enemy.val();
+<<<<<<< HEAD
 				// console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
 				io.sockets.emit('getEnemy', enemy.val());
+=======
+				console.log(enemy.val());//enemy.val() inimigo selecionado randomicamente
+				console.log("enemyval().hp is: " + enemy.val().hp);
+				console.log("currentmonster.hp is: " + currentMonster.hp);				
+				// client.emit('trazInimigo', enemy.val());
+				// client.broadcast.emit('trazInimigo', enemy.val());
+				io.sockets.emit('getEnemy', currentMonster);
+>>>>>>> Matheus-Phaser
 			}
 		})
 
@@ -322,10 +340,16 @@ io.sockets.on('connection', function (client) {
 		nome = nomeJogador;
 	});
 
+<<<<<<< HEAD
 	client.on('testthing', function () {
 		 console.log('godfodjf');
 		 client.emit('hellohello', 'blablabalbl');
 	
+=======
+	client.on('testthing', function (msg) {
+		console.log('socket workd ' + msg);
+		client.emit('hellohello', 'hohoho');
+>>>>>>> Matheus-Phaser
 	});
 
 	client.on('toServer', function (msg) {
@@ -394,6 +418,19 @@ io.sockets.on('connection', function (client) {
 		console.log('asked');
 	});
 	//-----------------------------------------------------------/\
+	client.on('send64', function (sprite64) {
+	//  console.log("SPRITE64: " + sprite64);
+
+		io.sockets.emit('64toPhaser', sprite64);
+		
+	});
+	//-----------------------------------------------------------/\
+	client.on('SPACEBAR', function () {
+		 console.log("SPACEBAR PRESSED, SERVER KNOWS!");
+	
+			
+		});
+	//-----------------------------------------------------------/\
 	
 	client.on('getCharacter', function (uid) { 
 		var personagemRef = dataBase.ref('/personagem');
@@ -403,6 +440,7 @@ io.sockets.on('connection', function (client) {
 
 					var existingCharacter = getCharacter(uid);
 					if(existingCharacter == null){
+<<<<<<< HEAD
 					var newPlayer = new playerInfo(uid,obj.val());
 					players.push(newPlayer);
 					if(players.length == 1){
@@ -419,15 +457,43 @@ io.sockets.on('connection', function (client) {
 					if(players.length == 2){
 						existingCharacter == players[0] ? client.broadcast.emit('sendPartner', players[1].character) : 
 						client.broadcast.emit('sendPartner', players[0].character);
+=======
+						var newPlayer = new playerInfo(uid,obj.val());
+						players.push(newPlayer);
+						console.log('size ' + players.length);
+						if(players.length == 1){
+							client.emit('sendCharacter', players[0].character); //envia o objeto do client
+						}
+						else{
+							client.emit('sendCharacter', players[1].character); //envia o objeto do client
+							client.emit('sendPartner', players[0].character);//envia 'parceiro' do client
+							client.broadcast.emit('sendPartner', players[1].character); //envia 'parceiro' do outro client
+							// console.log('send monster')
+							// getNewEnemy();
+						}
+>>>>>>> Matheus-Phaser
 					}
+					else{
+						client.emit('sendCharacter', existingCharacter);
+						if(players.length == 2){
+							existingCharacter == players[0] ? client.broadcast.emit('sendPartner', players[1].character) : 
+							client.broadcast.emit('sendPartner', players[0].character);
+						}
 
-				}
+					}
 				}
 			});
 		})
+<<<<<<< HEAD
 		if(players.length == 2){
 			getNewEnemy();
 		}
+=======
+		// if(players.length == 2){
+		// 	console.log('send monster')
+		// 	getNewEnemy();
+		// }
+>>>>>>> Matheus-Phaser
 	
 	});
 	//-------------------------------------------------------------
@@ -444,22 +510,40 @@ io.sockets.on('connection', function (client) {
 
 	client.on('attack', function (info) { 
 		//client.emit('enviaOsPlayers', jogadoresRef);
+<<<<<<< HEAD
 		// console.log(info);
+=======
+		console.log("INFO: ");
+		console.log(info);
+
+>>>>>>> Matheus-Phaser
 		attacker = getCharacter(info.uid);
+		console.log("ATTACKER: ");
+		console.log(attacker);
+
 		//console.log("CLASSE: " + character.class);
+		// console.log("INFOUID: " + info.uid);
 		if(attacker.class == "mage"){
-			//damage = 
-			attackMage(attacker, info.nAtaque);
+			console.log("RECONHECEU MAGE");
+			attackMage(info.uid, info.nAtaque);
 		}else{
-			attackWarrior(attacker, info.nAtaque);
+			attackWarrior(info.uid, info.nAtaque);
 			if(info.nAtaque == 2){
 				userAttractedUid = info.uid;
 			}
 		}
 		io.sockets.emit('enemyDamaged',currentMonster.hp);
 		setTimeout(function(){
+<<<<<<< HEAD
 			turnCount++;
 			CheckMonsterAttack();
+=======
+
+			io.sockets.emit('enemyDamaged', currentMonster.hp);
+			turnCount++;
+			CheckMonsterAttack();
+			console.log("Enemy hp is: " + currentMonster.hp);
+>>>>>>> Matheus-Phaser
 		}, 2000);
 	});
 
@@ -476,6 +560,15 @@ io.sockets.on('connection', function (client) {
 			}, 2000);
 		}
 	}
+
+	client.on('playerReady', function(){
+		// console.log("PhasertoServer WORKS!");
+		playersReady++;
+		if(playersReady == 2){
+			getNewEnemy();
+			io.sockets.emit('canRenderPlayers');
+		}
+	});
 
 	client.on('passTurn', function () { 
 		turnCount++;
