@@ -1,4 +1,4 @@
-angular.module('myApp', ['ionic.native']).controller('Game', function ($scope, $cordovaGooglePlus, $http ) {
+angular.module('myApp', []).controller('Game', function ($scope, $http) {
 
 	//$scope.existePersonagem();
 	
@@ -18,17 +18,17 @@ angular.module('myApp', ['ionic.native']).controller('Game', function ($scope, $
 
 	}
 
-	$scope.userData;
-	$scope.loginUser = function() {
-	  $cordovaGooglePlus.login({})
-	  .then(function(res) {
-		console.log('good');
-		$scope.userData = res
-	  }, function(err) {
-		console.log('error');
-		console.log(err);
-	  });
-	};
+	// $scope.userData;
+	// $scope.loginUser = function() {
+	//   $cordovaGooglePlus.login({})
+	//   .then(function(res) {
+	// 	console.log('good');
+	// 	$scope.userData = res
+	//   }, function(err) {
+	// 	console.log('error');
+	// 	console.log(err);
+	//   });
+	// };
 	
 	$scope.checkIfLoggedIn();
 
@@ -42,10 +42,26 @@ angular.module('myApp', ['ionic.native']).controller('Game', function ($scope, $
 	}
 					
 	$scope.signInWithGoogle = function(){
-		console.log(navigator);	
-		$scope.loginUser();
-		
+		// console.log(navigator);	
+		// $scope.loginUser();
+		var provider = new firebase.auth.GoogleAuthProvider();	
+		firebase.auth().signInWithRedirect(provider).then(function() {
+			return firebase.auth().getRedirectResult();
+		}).then(function(result) {
+			// This gives you a Google Access Token.
+			// You can use it to access the Google API.
+			var token = result.credential.accessToken;
+			// The signed-in user info.
+			var user = result.user;
 
+			console.log('wioeuqowiruqeiorueiowuriowru it eworieokerewfdojg lghlerhglh')
+			// ...
+		}).catch(function(error) {
+			// Handle Errors here.
+			var errorCode = error.code;
+			var errorMessage = error.message;
+			console.log("errooooou "+error);
+		});
 	// 	var credential = firebase.auth.GoogleAuthProvider.credential(idToken, accessToken);
 	// //firebase.auth().signInWithRedirect(provider);
 	// 	// [END googlecredential]
@@ -65,10 +81,10 @@ angular.module('myApp', ['ionic.native']).controller('Game', function ($scope, $
 
 });
 
-function onSignIn(googleUser) {
-	var profile = googleUser.getBasicProfile();
-	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-	console.log('Name: ' + profile.getName());
-	console.log('Image URL: ' + profile.getImageUrl());
-	console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-  }
+// function onSignIn(googleUser) {
+// 	var profile = googleUser.getBasicProfile();
+// 	console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+// 	console.log('Name: ' + profile.getName());
+// 	console.log('Image URL: ' + profile.getImageUrl());
+// 	console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+//   }

@@ -80,6 +80,8 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 			
 			//console.log(snapshot.val());
 			snapshot.forEach(function(id) {
+				console.log('obj')
+				console.log(id.val())
 				idUsuario = id.val();
 				if(idUsuario.userId === firebase.auth().currentUser.uid){//id do unuario igual ao id do usuario que esta no personagem
 					//tem personagem
