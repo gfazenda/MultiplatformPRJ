@@ -3,9 +3,8 @@ angular.module('myApp', []).controller('Game', function ($scope, $http) {
 	//$scope.existePersonagem();
 	$scope.showFields = false;
 	$scope.checkIfLoggedIn = function(){
-		if(navigator.platform == 'Linux aarch64'){ //android
+		
 			window.location.href = 'inicio.html'; 
-		}
 		firebase.auth().onAuthStateChanged(function(user){
 			if(user){//logado
 				window.location.href = 'inicio.html'; 
@@ -34,6 +33,7 @@ angular.module('myApp', []).controller('Game', function ($scope, $http) {
 					
 	$scope.signInWithGoogle = function(){
 		console.log(navigator.platform)	
+		$scope.checkIfLoggedIn();
 		if(navigator.platform == 'Linux aarch64'){ //android
 			console.log('got you')
 			$scope.checkIfLoggedIn();

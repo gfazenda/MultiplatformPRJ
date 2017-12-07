@@ -706,12 +706,7 @@ function createButtons(){
 }
 
 function getUID(){
-	if(navigator.platform == 'Linux aarch64'){ //android
 		return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
-	}
-	else{
-		return firebase.auth().currentUser.uid;
-	}
 }
 
 function start() {

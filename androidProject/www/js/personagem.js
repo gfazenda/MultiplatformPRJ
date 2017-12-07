@@ -13,13 +13,8 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 	// });
 	
 	function getUID(){
-		if(navigator.platform == 'Linux aarch64'){ //android
-			return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
-		}
-		else{
-			return firebase.auth().currentUser.uid;
-		}
-	}
+		return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
+}
 	
 	$scope.criaPersonagem = function(escolhaClass){
 		//escolhaClass é o numero da classe. 0 para warrior e 1 para mago

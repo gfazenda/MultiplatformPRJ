@@ -3,12 +3,9 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 
 	//socket----------------------------------------------------------------------------------
 	$scope.getUID = function() {
-		if(navigator.platform == 'Linux aarch64'){ //android
+		
 			return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
-		}
-		else{
-			return firebase.auth().currentUser.uid;
-		}
+	
 	}
 
 	var canPlay = false;
