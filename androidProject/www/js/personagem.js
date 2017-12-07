@@ -13,8 +13,8 @@ angular.module('myPersonagem', []).controller('personagem', function ($scope, $h
 	// });
 	
 	function getUID(){
-		return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
-}
+		return 'ns79rSSblVPQo1cxNHWNW7dRcFG2';
+	}
 	
 	$scope.criaPersonagem = function(escolhaClass){
 		//escolhaClass é o numero da classe. 0 para warrior e 1 para mago

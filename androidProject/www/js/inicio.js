@@ -4,7 +4,7 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 	//socket----------------------------------------------------------------------------------
 	$scope.getUID = function() {
 		
-			return 'UQlLVlZY4OXot15kn4IsZLy0n6n1';
+			return 'ns79rSSblVPQo1cxNHWNW7dRcFG2';
 	
 	}
 
@@ -39,7 +39,7 @@ angular.module('myIni', []).controller('ini', function ($scope, $http) {
 			console.log('checkng it')
 			$scope.existePersonagem();
 		}
-		socket.emit('userOnServer', {name: 'LOLOLOL',
+		socket.emit('userOnServer', {name: 'Garland',
 			// $scope.personagemJgador.name,
 									uid: $scope.getUID()
 									});

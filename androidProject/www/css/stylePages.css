@@ -1,0 +1,111 @@
+#iconChange {
+    
+}
+
+#imgBTN {
+position: relative;
+}
+
+#cardAbove {
+position: absolute;
+top: 80%;
+left: 38%;
+}
+
+#cardAbove2 {
+position: absolute;
+top: 5%;
+left: 50%;
+font-size: 20px;
+color: white;
+}
+
+#infoCardAbove {
+position: absolute;
+top: 5%;
+left: 5%;
+font-size: 25px;
+color: white;
+}
+
+
+#player1Above {
+position: absolute;
+top: 30%;
+right: 20%;
+}
+
+#player2Above {
+position: absolute;
+top: 35%;
+right: 15%;
+}
+
+#playerHP {
+font-size: 40px;
+color: white;
+}
+
+#enemyAbove {
+position: absolute;
+top: 30%;
+left: 10%;
+}
+
+#enemyHP {
+font-size: 40px;
+color: white;
+}
+
+.container {
+margin: 0 auto; 
+max-width: 1280px;
+width: 90%;
+}
+
+@media only screen and (min-width: 601px){
+.container {
+    width: 85%;
+}
+}
+
+@media only screen and (min-width: 993px){
+.container {
+    width: 70%;
+}
+}
+
+.containerLogin {
+
+    /* display: flex;
+    align-content: center;
+    justify-content: center; */
+    display: flex;
+	flex-wrap: wrap;
+	/* height: 150px; */
+    align-items: center;
+	justify-content: center;
+    width: 320px;
+    margin: auto;
+	/* line-height: 0; */
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    background-color: #3D4947; 
+
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+  #welcomeText {
+
+    font-size: 60px;
+    color: white;
+  }
