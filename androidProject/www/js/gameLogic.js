@@ -52,7 +52,7 @@ var buttonGroupWarrior;
 
 var criarButton = true;
 
-var enemySprite;
+// var enemySprite;
 var enemyHP;
 var enemyHPMax;
 var enemyPower;
@@ -432,6 +432,8 @@ function preload() {
 	game.load.image('enemy1', 'assets/enemy1.png');	
 	game.load.image('enemy2', 'assets/enemy2.png');	
 	game.load.image('enemy3', 'assets/enemy3.png');		
+
+	// game.load.json('magic', 'assets/partyMagic.json');
 }
 
 
@@ -705,7 +707,7 @@ function createButtons(){
 
 function start() {
 	
-		loadImage = game.load.image('picture1', 'assets/loading.png');
+		// loadImage = game.load.image('picture1', 'assets/loading.png');
 		
 		// getThings(firebase.auth().currentUser.uid);
 		socket.emit('getCharacter', firebase.auth().currentUser.uid);
@@ -755,15 +757,15 @@ function loadComplete() {
 	
 	loadText.setText("Load Complete");
 	loadText.destroy();
-	loadImage.visible = false;
-	loadImage.destroy();
-	loadImage = '';
+	// loadImage.visible = false;
+	// loadImage.destroy();
+	// loadImage = '';
 }
 
 
 function create() {
 
-	
+	// game.plugins.add(ParticleEditorPlugin);
 
 	var sky = game.add.sprite(0, 0, 'sky');
 	sky.scale.set(0.68);
@@ -829,15 +831,13 @@ function create() {
 	actionText.anchor.set(0.5);
 	damageText.visible = false;
 
-	// game.add.tween(player1Sprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
-	// game.add.tween(player2Sprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
-	// game.add.tween(enemySprite).to( { alpha: 0 }, 2000, Phaser.Easing.Linear.None, false, 0, 0, false);
-
-
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     cursors = game.input.keyboard.createCursorKeys();
+
+	// var phaserJSON = game.cache.getJSON('magic');
+    // game.add.particleEffect(10, 10, phaserJSON);
 
 }
 
@@ -890,7 +890,7 @@ socket.on('getEnemy', function (enemy, firstMonster) {
 	console.log("got enemy");  
 	console.log(enemy); 
 
-	enemySprite = enemy.sprite;
+	// enemySprite = enemy.sprite;
 	enemyHP = enemy.hp;
 	enemyHPMax = enemy.hpMax;
 	enemyPower = enemy.power; 
@@ -989,6 +989,10 @@ socket.on('sendCharacter', function (char) {
 		// actionText.visible = false;
 		// actionPlayerUI.visible = false;
 		enemyHP = hpMonster;
+
+		currentMonster.alpha = 0;
+		game.add.tween(currentMonster).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+		
 		console.log("ENEMYHP IS: " + enemyHP);
 		textEnemyHP.setText('HP : ' + enemyHP);	
 
@@ -1003,11 +1007,6 @@ socket.on('sendCharacter', function (char) {
 			damageText.visible = false;
 			// Tween.stop();
 		}, 2000);
-		
-	});
-
-	socket.on('enemyDamaged', function (hpMonster) {
-		
 		
 	});
 
@@ -1047,6 +1046,9 @@ socket.on('playerDamaged', function (playerUID, damage) {
 				player1HP = Math.round(player1HP);	
 				player1HPText.setText('HP:' + player1HP);
 
+				player1Sprite.alpha = 0;
+				game.add.tween(player1Sprite).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
+
 				damageText.setText(damage);
 				damageText.x = player1Sprite.x - 25;
 				damageText.y = player1Sprite.y;
@@ -1065,6 +1067,9 @@ socket.on('playerDamaged', function (playerUID, damage) {
 				player2HP -= damage;				
 				player2HP = Math.round(player2HP);	
 				player2HPText.setText('HP:' + player2HP);
+
+				player2Sprite.alpha = 0;
+				game.add.tween(player2Sprite).to( { alpha: 1 }, 1000, Phaser.Easing.Linear.None, true, 0, 0, false);
 
 				damageText.setText(damage);
 				damageText.x = player2Sprite.x - 25;
@@ -1094,11 +1099,11 @@ socket.on('playerDamaged', function (playerUID, damage) {
 		
 						player1Sprite = game.add.sprite(600, 400,'mage');
 						player1Sprite.scale.setTo(0.25, 0.25);
-						player1Sprite.alpha = 1;
+						// player1Sprite.alpha = 0;
 		
 						player2Sprite = game.add.sprite(800, 410,'warrior');
 						player2Sprite.scale.setTo(0.1, 0.1);
-						player2Sprite.alpha = 1;
+						// player2Sprite.alpha = 1;
 		
 						buttonGroupMage = game.add.group();
 						buttonGroupMage2 = game.add.group();
@@ -1113,14 +1118,15 @@ socket.on('playerDamaged', function (playerUID, damage) {
 					else{
 						player1Sprite = game.add.sprite(600, 410, 'warrior');
 						player1Sprite.scale.setTo(0.1, 0.1);
-						player1Sprite.alpha = 1;
+						// player1Sprite.alpha = 0;
 		
 						player2Sprite = game.add.sprite(800, 400,'mage');
 						player2Sprite.scale.setTo(0.25, 0.25);
-						player2Sprite.alpha = 1;
+						// player2Sprite.alpha = 1;
 		
 						buttonGroupWarrior = game.add.group();
 						
+
 						// player1HPText.visible = true;
 						// player2HPText.visible = true;
 						
